@@ -24,77 +24,6 @@ REQUIRED_COLUMNS = ["x", "y", "tx", "ty", "kappa_t", "mask"]
 OPTIONAL_COLUMNS = ["w"]
 
 
-def _nearest_nonzero_delta(points: np.ndarray, idx: int) -> np.ndarray:
-    n = points.shape[0]
-    for offset in range(1, n):
-        prev = idx - offset
-        if prev >= 0:
-            delta_prev = points[idx] - points[prev]
-            if np.linalg.norm(delta_prev) > 0:
-                return delta_prev
-        nxt = idx + offset
-        if nxt < n:
-            delta_next = points[nxt] - points[idx]
-            if np.linalg.norm(delta_next) > 0:
-                return delta_next
-    return np.zeros(2, dtype=np.float32)
-
-
-def _compute_tangent_components(x: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    points = np.stack([x, y], axis=1).astype(np.float32)
-    n = points.shape[0]
-    if n == 0:
-        return np.array([], dtype=np.float32), np.array([], dtype=np.float32)
-    if n == 1:
-        return np.array([0.0], dtype=np.float32), np.array([0.0], dtype=np.float32)
-
-    deltas = np.zeros_like(points)
-    deltas[0] = points[1] - points[0]
-    deltas[-1] = points[-1] - points[-2]
-    if n > 2:
-        deltas[1:-1] = points[2:] - points[:-2]
-
-    tangents = np.zeros_like(points)
-    for i in range(n):
-        delta = deltas[i]
-        norm = np.linalg.norm(delta)
-        if norm == 0:
-            delta = _nearest_nonzero_delta(points, i)
-            norm = np.linalg.norm(delta)
-        if norm == 0:
-            tangents[i] = np.array([0.0, 0.0], dtype=np.float32)
-        else:
-            tangents[i] = delta / norm
-
-    return tangents[:, 0], tangents[:, 1]
-
-
-def _ensure_required_columns(df: pd.DataFrame) -> pd.DataFrame:
-    missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
-    if not missing:
-        return df
-
-    df_out = df.copy()
-
-    if "tx" not in df_out.columns or "ty" not in df_out.columns:
-        if "x" in df_out.columns and "y" in df_out.columns:
-            tx, ty = _compute_tangent_components(
-                df_out["x"].to_numpy(dtype=np.float32),
-                df_out["y"].to_numpy(dtype=np.float32),
-            )
-            df_out["tx"] = tx
-            df_out["ty"] = ty
-
-    if "kappa_t" not in df_out.columns and "strain" in df_out.columns:
-        # Use measured strain as curvature proxy when kappa_t is absent.
-        df_out["kappa_t"] = df_out["strain"]
-
-    if "mask" not in df_out.columns:
-        df_out["mask"] = np.ones(len(df_out), dtype=np.float32)
-
-    return df_out
-
-
 def _resolve_path(base: Path, entry: str) -> Path:
     path = Path(entry)
     if path.is_absolute():
@@ -145,7 +74,6 @@ def _validate_columns(df: pd.DataFrame) -> None:
 
 
 def _df_to_sample(df: pd.DataFrame) -> dict[str, torch.Tensor]:
-    df = _ensure_required_columns(df)
     _validate_columns(df)
     arrays = {col: df[col].to_numpy(dtype=np.float32) for col in REQUIRED_COLUMNS}
     x = arrays["x"]
