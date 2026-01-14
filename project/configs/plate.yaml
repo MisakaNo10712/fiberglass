@@ -1,0 +1,62 @@
+# ========================================
+# 板/数据相关配置
+# ========================================
+# 此文件定义与物理模型和数据相关的参数
+# 后续扩展点：添加更多几何参数、材料属性等
+
+# 项目背景与假设
+project:
+  description: "从 COMSOL 导出的 txt（列：x y z strain u v w）构建数据处理管线，当前仅做脚手架与最小可运行入口。"
+  data_source: "COMSOL 导出纯文本，空格/Tab 分隔；若无表头则按列序命名。"
+  stage: "脚手架阶段，仅做读取/校验/转换，不包含复杂几何或神经网络。"
+  environment: "Python >=3.10，Linux/macOS/Windows 通用。"
+
+# 板几何参数（占位）
+plate:
+  # 板厚度 (单位: m)
+  thickness_h: 0.01
+  # 板长度 (单位: m)
+  length: 1.0
+  # 板宽度 (单位: m)
+  width: 0.5
+
+# 网格参数（占位）
+mesh:
+  # 网格大小 (单位: m)
+  element_size: 0.01
+  # 网格类型: "structured" | "unstructured"
+  type: "structured"
+
+# 边界条件（占位）
+boundary:
+  # 固定区域定义
+  fixed_regions:
+    - name: "left_edge"
+      type: "clamped"
+      # x 坐标范围
+      x_range: [0.0, 0.0]
+      y_range: null  # null 表示全范围
+
+# 光纤路径参数（占位，后续扩展）
+fiber:
+  # 光纤布置方向: "x" | "y" | "custom"
+  direction: "x"
+  # 光纤 z 位置（相对于中性面的偏移）
+  z_offset: 0.005  # 上表面
+
+# 数据列定义
+data_columns:
+  # 坐标列
+  coordinates: ["x", "y", "z"]
+  # 应变列
+  strain: "strain"
+  # 位移列
+  displacement: ["u", "v", "w"]
+  # 所有必需列
+  required: ["x", "y", "z", "strain", "u", "v", "w"]
+
+# 单位定义
+units:
+  length: "m"
+  strain: "dimensionless"
+  displacement: "m"

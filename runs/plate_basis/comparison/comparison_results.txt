@@ -1,0 +1,8 @@
+Data file: data/merged_fibers_output_z_p0p000.txt
+Model: runs/plate_basis/best.pt
+
+Error Statistics:
+Component  MAE             RMSE            Max Error      
+u          2.932423e-06    5.028845e-06    2.241067e-05   
+v          6.545406e-07    1.024494e-06    4.703525e-06   
+w          1.140860e-04    1.829609e-04    1.044904e-03   

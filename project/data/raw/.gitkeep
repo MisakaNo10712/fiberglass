@@ -1,0 +1,3 @@
+# 此目录用于存放 COMSOL 导出的原始 txt 数据文件
+# 数据格式：空格或 Tab 分隔，包含列 x y z strain u v w
+# 详见 README.md

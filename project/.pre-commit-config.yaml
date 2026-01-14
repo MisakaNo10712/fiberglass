@@ -1,0 +1,40 @@
+# Pre-commit 配置文件
+# 安装: pre-commit install
+# 手动运行: pre-commit run --all-files
+
+repos:
+  # Ruff - 快速的 Python linter 和 formatter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.6
+    hooks:
+      # Linter
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      # Formatter (替代 black)
+      - id: ruff-format
+
+  # 通用文件检查
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # 检查 YAML 语法
+      - id: check-yaml
+      # 检查 TOML 语法
+      - id: check-toml
+      # 确保文件以换行符结尾
+      - id: end-of-file-fixer
+      # 移除行尾空白
+      - id: trailing-whitespace
+      # 检查大文件
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      # 检查 merge conflict 标记
+      - id: check-merge-conflict
+      # 检查 debug 语句
+      - id: debug-statements
+
+  # 检查 pyproject.toml
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.15
+    hooks:
+      - id: validate-pyproject
