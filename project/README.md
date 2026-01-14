@@ -68,7 +68,7 @@ pip install -e .
   ```
 - 训练入口
   ```bash
-  python scripts/train.py --config configs/train.yaml
+  PYTHONPATH=.:src python scripts/train.py --config configs/train.yaml
   ```
   - 自动读取 manifest 或单个 parquet 文件并训练。
   - 训练输出写入 `runs/<timestamp>/`，包含 `config.yaml`、`metrics.csv`、`checkpoint.pt`。

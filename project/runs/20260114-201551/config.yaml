@@ -1,0 +1,32 @@
+seed: 42
+device: auto
+data:
+  manifest: data/processed/manifest.json
+  samples_dir: data/processed
+  use_dataframe: false
+model:
+  in_features: 5
+  d_model: 128
+  n_layers: 4
+  dropout: 0.0
+  out_coeffs: 16
+  encoder_type: auto
+basis:
+  M: 4
+  N: 4
+  Lx: 0.3
+  Ly: 1.0
+train:
+  batch_size: 8
+  epochs: 100
+  lr: 0.001
+  weight_decay: 0.0
+  grad_clip: 1.0
+loss:
+  huber_delta: 1.0
+  lambda_hf: 0.01
+  lambda_w: 1.0
+  lambda_bc: 0.0
+run:
+  save_dir: runs
+  name: ''
