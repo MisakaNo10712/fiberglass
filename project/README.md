@@ -60,6 +60,9 @@ pip install -e .
   python scripts/prepare_dataset.py --input data/raw --no-header
   # 自定义模式:
   python scripts/prepare_dataset.py --input data/raw --pattern "*.dat"
+
+  PYTHONPATH=.:src python scripts/prepare_stage2.py --input data/processed --output data/processed2
+
   ```
   - 每个输入文件生成同名 `.parquet` 至 `data/processed/`。
   - 生成 `manifest.json`，包含处理时间、文件列表、行数、列统计（min/max/mean）、是否有表头、输出路径。
