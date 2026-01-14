@@ -1,8 +1,8 @@
 seed: 42
 device: auto
 data:
-  manifest: data/processed/manifest.json
-  samples_dir: data/processed
+  manifest: data/processed2/manifest.json
+  samples_dir: data/processed2
   use_dataframe: false
 model:
   in_features: 5

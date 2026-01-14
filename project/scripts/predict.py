@@ -151,6 +151,35 @@ def _plot_curve(
     plt.close()
 
 
+def _plot_3d_scatter(
+    *,
+    x: np.ndarray,
+    y: np.ndarray,
+    z: np.ndarray,
+    path: Path,
+    title: str,
+    zlabel: str,
+) -> None:
+    try:
+        import matplotlib.pyplot as plt
+    except Exception:
+        logger.warning("matplotlib unavailable; skip 3D plot")
+        return
+    if x.size == 0:
+        logger.warning("No points for 3D plot: %s", path.name)
+        return
+    fig = plt.figure(figsize=(6, 4.5))
+    ax = fig.add_subplot(111, projection="3d")
+    ax.scatter(x, y, z, s=6, alpha=0.5)
+    ax.set_title(title)
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel(zlabel)
+    fig.tight_layout()
+    fig.savefig(path, dpi=160)
+    plt.close(fig)
+
+
 def main() -> int:
     args = parse_args()
     checkpoint_path = Path(args.checkpoint)
@@ -166,7 +195,10 @@ def main() -> int:
 
     if args.manifest is not None:
         config.setdefault("data", {})["manifest"] = args.manifest
-    if args.data_dir is not None:
+        config.setdefault("data", {})["samples_dir"] = None
+    elif args.data_dir is not None:
+        # Force samples_dir to take precedence over any existing manifest.
+        config.setdefault("data", {})["manifest"] = None
         config.setdefault("data", {})["samples_dir"] = args.data_dir
     if args.device is not None:
         config["device"] = args.device
@@ -187,6 +219,11 @@ def main() -> int:
     prediction_rows: list[dict] = []
     coeff_rows: list[dict] = []
     w_rows: list[dict] = []
+    metrics_rows: list[dict] = []
+    total_kappa_sse = 0.0
+    total_kappa_count = 0
+    total_w_sse = 0.0
+    total_w_count = 0
     plot_cache: dict[int, dict[str, np.ndarray]] = {}
 
     model.eval()
@@ -202,16 +239,21 @@ def main() -> int:
             batch_device = trainer._move_batch(batch)
             outputs = trainer._forward(batch_device)
 
+            w_pred_points = outputs.get("w_pred_points")
+            if w_pred_points is None:
+                a_reshaped = outputs["a_reshaped"]
+                x_for_w = batch_device.get("x", batch_device["X"][..., 0])
+                y_for_w = batch_device.get("y", batch_device["X"][..., 1])
+                w_pred_points = trainer._compute_w(a_reshaped, x_for_w, y_for_w)
+
             kappa_pred = outputs["kappa_pred"].detach().cpu().numpy()
             kappa_meas = batch["X"][..., 4].detach().cpu().numpy()
             x_vals = batch.get("x", batch["X"][..., 0]).detach().cpu().numpy()
             y_vals = batch.get("y", batch["X"][..., 1]).detach().cpu().numpy()
             mask_np = mask.detach().cpu().numpy()
 
-            w_pred = outputs.get("w_pred_points")
             w_true = batch.get("w_points")
-            if w_pred is not None:
-                w_pred = w_pred.detach().cpu().numpy()
+            w_pred = w_pred_points.detach().cpu().numpy()
             if w_true is not None:
                 w_true = w_true.detach().cpu().numpy()
 
@@ -255,6 +297,34 @@ def main() -> int:
                             row["w_true"] = float(w_true[i, pid])
                         w_rows.append(row)
 
+                kappa_diff = kappa_pred[i, valid] - kappa_meas[i, valid]
+                kappa_mse = float(np.mean(kappa_diff**2)) if kappa_diff.size else float("nan")
+                kappa_mae = float(np.mean(np.abs(kappa_diff))) if kappa_diff.size else float("nan")
+                total_kappa_sse += float(np.sum(kappa_diff**2))
+                total_kappa_count += int(kappa_diff.size)
+
+                w_mse = float("nan")
+                w_mae = float("nan")
+                if w_true is not None:
+                    w_diff = w_pred[i, valid] - w_true[i, valid]
+                    if w_diff.size:
+                        w_mse = float(np.mean(w_diff**2))
+                        w_mae = float(np.mean(np.abs(w_diff)))
+                        total_w_sse += float(np.sum(w_diff**2))
+                        total_w_count += int(w_diff.size)
+
+                metrics_rows.append(
+                    {
+                        "sample_id": sample_idx,
+                        "sample_name": sample_name,
+                        "n_points": int(valid.sum()),
+                        "kappa_mse": kappa_mse,
+                        "kappa_mae": kappa_mae,
+                        "w_mse": w_mse,
+                        "w_mae": w_mae,
+                    }
+                )
+
                 coeff_rows.append(
                     {
                         "sample_id": sample_idx,
@@ -265,9 +335,11 @@ def main() -> int:
 
                 if sample_idx < plot_limit:
                     plot_cache[sample_idx] = {
+                        "x": x_vals[i, valid],
+                        "y": y_vals[i, valid],
                         "kappa_meas": kappa_meas[i, valid],
                         "kappa_pred": kappa_pred[i, valid],
-                        "w_pred": None if w_pred is None else w_pred[i, valid],
+                        "w_pred": w_pred[i, valid],
                         "w_true": None if w_true is None else w_true[i, valid],
                     }
 
@@ -277,6 +349,8 @@ def main() -> int:
     _save_parquet(output_dir / "coeffs.parquet", coeff_rows)
     if w_rows:
         _save_parquet(output_dir / "w_predictions.parquet", w_rows)
+    if metrics_rows:
+        pd.DataFrame(metrics_rows).to_csv(output_dir / "prediction_metrics.csv", index=False)
 
     df_pred = pd.DataFrame(prediction_rows)
     _plot_kappa_scatter(df_pred, output_dir / "kappa_scatter.png")
@@ -296,7 +370,24 @@ def main() -> int:
             title=f"kappa_t: {sample_name}",
             ylabel="kappa_t",
         )
-        if payload["w_pred"] is not None and payload["w_true"] is not None:
+        _plot_3d_scatter(
+            x=payload["x"],
+            y=payload["y"],
+            z=payload["w_pred"],
+            path=output_dir / f"w_pred_3d_{sample_name}.png",
+            title=f"w_pred: {sample_name}",
+            zlabel="w_pred",
+        )
+        if payload["w_true"] is not None:
+            _plot_3d_scatter(
+                x=payload["x"],
+                y=payload["y"],
+                z=payload["w_true"],
+                path=output_dir / f"w_true_3d_{sample_name}.png",
+                title=f"w_true: {sample_name}",
+                zlabel="w_true",
+            )
+        if payload["w_true"] is not None:
             _plot_curve(
                 x=x_axis,
                 y_meas=payload["w_true"],
@@ -306,9 +397,16 @@ def main() -> int:
                 ylabel="w",
             )
 
+    overall_kappa_mse = (
+        total_kappa_sse / total_kappa_count if total_kappa_count else float("nan")
+    )
+    overall_w_mse = total_w_sse / total_w_count if total_w_count else float("nan")
+
     summary = {
         "num_samples": len(sample_names),
         "num_points": int(len(prediction_rows)),
+        "kappa_mse": overall_kappa_mse,
+        "w_mse": overall_w_mse,
         "output_dir": str(output_dir),
     }
     with (output_dir / "prediction_summary.json").open("w", encoding="utf-8") as handle:

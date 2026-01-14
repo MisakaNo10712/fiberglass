@@ -79,6 +79,9 @@ pip install -e .
 - 评估入口
   ```bash
   python scripts/eval.py --checkpoint runs/<timestamp>/checkpoint.pt
+  PYTHONPATH=.:src python scripts/predict.py   --checkpoint runs/<run_name>/checkpoint.pt   --data_dir /data/processed2
+bash: run_name: No such file or directory
+
   ```
 
 ## 配置
