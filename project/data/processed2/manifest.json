@@ -1,0 +1,430 @@
+{
+  "created_at": "2026-01-14T21:46:35.072851",
+  "input_path": "data/processed",
+  "pattern": "*.parquet",
+  "total_files": 21,
+  "total_rows": 5418,
+  "note": "kappa_t = strain (placeholder)",
+  "files": [
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p005.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p005.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p010.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p010.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p015.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p015.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p020.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p020.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p025.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p025.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p030.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p030.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p035.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p035.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p040.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p040.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p045.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p045.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_m0p050.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_m0p050.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p000.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p000.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p005.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p005.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p010.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p010.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p015.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p015.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p020.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p020.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p025.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p025.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p030.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p030.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p035.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p035.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p040.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p040.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p045.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p045.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    },
+    {
+      "input_file": "data/processed/merged_fibers_output_z_p0p050.parquet",
+      "output_file": "data/processed2/merged_fibers_output_z_p0p050.parquet",
+      "num_rows": 258,
+      "num_cols": 12,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w",
+        "s",
+        "tx",
+        "ty",
+        "kappa_t",
+        "mask"
+      ]
+    }
+  ]
+}
