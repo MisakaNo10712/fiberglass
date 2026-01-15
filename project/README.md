@@ -106,6 +106,13 @@ pip install -e .
   python scripts/predict.py --checkpoint runs/<timestamp>/checkpoint.pt --data_dir data/processed2_pair
   ```
 
+- 诊断包导出（定位 kappa_pred 尺度问题）
+  ```bash
+  python tools_diagnose/collect_kappa_debug_pack.py --checkpoint runs/<timestamp>/checkpoint.pt --sample_id 5 --grid_nx 80 --grid_ny 80
+  ```
+  - 默认输出目录：`diagnostic_pack/<run_name>_sid<id>/`，包含网格 CSV、point_pack、pack_stats.json、PNG。
+  - 解读要点：`scale_ratio_std/max` 判断 kappa_meas 比例问题；`hessian_fd_error`/`kappa_fd_error` 判断解析 Hessian 尺度；`t_norm_mean` 判断 tx/ty 归一化。
+
 ## 配置
 - `configs/plate.yaml`：几何/网格/光纤布置等占位参数，以及项目背景元数据。
 - `configs/train.yaml`：数据、训练、设备、模型与损失权重配置。

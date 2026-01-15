@@ -1,0 +1,69 @@
+{
+  "checkpoint": "runs/20260116-011009/checkpoint.pt",
+  "config": "runs/20260116-011009/config.yaml",
+  "device": "cuda",
+  "model_encoder_type": "auto",
+  "forced_encoder": null,
+  "checkpoint_has_mamba": true,
+  "model_has_mamba": true,
+  "allow_cnn_fallback": false,
+  "cnn_fallback_reason": null,
+  "load_strict": true,
+  "split": "val",
+  "split_source": "full_dataset",
+  "sample_id": 5,
+  "dataset_index": 5,
+  "out_dir": "diagnostic_pack/20260116-011009_sid5",
+  "x_min": 0.0,
+  "x_max": 0.30000001192092896,
+  "y_min": 0.0,
+  "y_max": 0.9519519805908203,
+  "x_range_over_Lx": 1.00000003973643,
+  "y_range_over_Ly": 0.9519519805908203,
+  "coord_scale": 1.0,
+  "kappa_meas_scale": 1.0,
+  "kappa_meas_abs_max": 9.102511830860749e-05,
+  "kappa_meas_mean": -2.44159969042812e-06,
+  "kappa_meas_std": 1.2134092685300857e-05,
+  "kappa_pred_abs_max": 0.7396577000617981,
+  "kappa_pred_mean": 0.008850534446537495,
+  "kappa_pred_std": 0.2529298961162567,
+  "scale_ratio_std": 20844.56430583307,
+  "scale_ratio_max": 8125.86356030027,
+  "coeff_abs_max": 0.0005277432501316071,
+  "coeff_std": 0.0002490784681867808,
+  "kx_max": 31.415925979614258,
+  "ky_max": 9.42477798461914,
+  "kx_sq_max": 986.9603881835938,
+  "ky_sq_max": 88.8264389038086,
+  "hessian_fd_error": {
+    "w_xx": {
+      "max_abs": 0.0008743188973009408,
+      "mean_abs": 0.0002986267802391765,
+      "rel_max": 0.001162524816336917
+    },
+    "w_xy": {
+      "max_abs": 0.0002328923917907788,
+      "mean_abs": 5.6689475700959254e-05,
+      "rel_max": 0.00255448353124321
+    },
+    "w_yy": {
+      "max_abs": 5.233953082238452e-05,
+      "mean_abs": 1.3115876058483143e-05,
+      "rel_max": 0.0008841090227435647
+    }
+  },
+  "kappa_fd_error": {
+    "max_abs": 0.0008588221156186071,
+    "mean_abs": 0.00020845934442658982,
+    "rel_max": 0.0011613048830083465
+  },
+  "grid_nx": 80,
+  "grid_ny": 80,
+  "grid_dx": 0.0037974685053282146,
+  "grid_dy": 0.012050025070769877,
+  "fd_boundary_handling": "central difference on interior; boundary left as NaN",
+  "t_norm_mean": 1.0,
+  "t_norm_std": 1.5743689019132034e-08,
+  "t_norm_abs_max": 1.0
+}
