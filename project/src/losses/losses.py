@@ -13,6 +13,7 @@ from torch import Tensor
 __all__ = ["huber_loss", "hf_l2_loss", "optional_bc_loss", "total_loss"]
 
 logger = logging.getLogger(__name__)
+EPS = 1e-12
 
 
 def huber_loss(pred: Tensor, target: Tensor, mask: Optional[Tensor] = None, delta: float = 1.0) -> Tensor:
@@ -82,7 +83,9 @@ def total_loss(
     mask_w: Optional[Tensor] = None,
     bc_pred: Optional[Tensor] = None,
     bc_mask: Optional[Tensor] = None,
+    kappa_mean: float | Tensor | None = None,
     kappa_std: float | Tensor | None = None,
+    w_mean: float | Tensor | None = None,
     w_std: float | Tensor | None = None,
     lambda_kappa: float = 1.0,
     lambda_hf: float = 1.0,
@@ -93,19 +96,22 @@ def total_loss(
     log_every_n: Optional[int] = None,
 ) -> dict[str, Tensor]:
     """Compute total loss and return a dict of components."""
-    if kappa_std is None or w_std is None:
-        raise ValueError("kappa_std and w_std must be provided in batch.")
+    if kappa_std is None or w_std is None or kappa_mean is None or w_mean is None:
+        raise ValueError("kappa_mean/kappa_std and w_mean/w_std must be provided in batch.")
     _assert_positive("kappa_std", kappa_std)
     _assert_positive("w_std", w_std)
 
-    kappa_std_t = _as_scalar_tensor(kappa_std, kappa_pred).clamp_min(1e-8)
-    kappa_pred_hat = kappa_pred / kappa_std_t
-    kappa_meas_hat = kappa_meas / kappa_std_t
+    kappa_std_t = _as_scalar_tensor(kappa_std, kappa_pred).clamp_min(EPS)
+    kappa_mean_t = _as_scalar_tensor(kappa_mean, kappa_pred)
+    kappa_pred_hat = (kappa_pred - kappa_mean_t) / (kappa_std_t + EPS)
+    kappa_meas_hat = (kappa_meas - kappa_mean_t) / (kappa_std_t + EPS)
     raw_loss_kappa = huber_loss(kappa_pred_hat, kappa_meas_hat, mask=mask, delta=huber_delta)
     raw_loss_hf = hf_l2_loss(a, hf_W)
 
     weighted_loss_kappa = raw_loss_kappa * lambda_kappa
     weighted_loss_hf = raw_loss_hf * lambda_hf
+    raw_loss_w = torch.tensor(0.0, device=weighted_loss_kappa.device, dtype=weighted_loss_kappa.dtype)
+    weighted_loss_w = raw_loss_w
 
     loss = weighted_loss_kappa + weighted_loss_hf
     output = {
@@ -116,19 +122,24 @@ def total_loss(
         "raw_loss_hf": raw_loss_hf,
         "weighted_loss_kappa": weighted_loss_kappa,
         "weighted_loss_hf": weighted_loss_hf,
+        "raw_loss_w": raw_loss_w,
+        "weighted_loss_w": weighted_loss_w,
     }
 
     if w_pred_points is not None and w_true_points is not None:
         w_mask = mask_w if mask_w is not None else mask
-        w_std_t = _as_scalar_tensor(w_std, w_pred_points).clamp_min(1e-8)
-        w_pred_hat = w_pred_points / w_std_t
-        w_true_hat = w_true_points / w_std_t
+        w_std_t = _as_scalar_tensor(w_std, w_pred_points).clamp_min(EPS)
+        w_mean_t = _as_scalar_tensor(w_mean, w_pred_points)
+        w_pred_hat = (w_pred_points - w_mean_t) / (w_std_t + EPS)
+        w_true_hat = (w_true_points - w_mean_t) / (w_std_t + EPS)
         raw_loss_w = huber_loss(w_pred_hat, w_true_hat, mask=w_mask, delta=huber_delta)
         weighted_loss_w = raw_loss_w * lambda_w
         output["loss_w"] = raw_loss_w
         output["raw_loss_w"] = raw_loss_w
         output["weighted_loss_w"] = weighted_loss_w
         loss = loss + weighted_loss_w
+    else:
+        output["loss_w"] = raw_loss_w
 
     if bc_pred is not None and lambda_bc > 0:
         loss_bc = optional_bc_loss(bc_pred, mask_boundary=bc_mask)
@@ -137,6 +148,10 @@ def total_loss(
 
     if log_every_n is not None and log_every_n > 0 and step is not None:
         if step % log_every_n == 0:
+            total_weighted = (weighted_loss_kappa + weighted_loss_w + weighted_loss_hf).clamp_min(EPS)
+            ratio_kappa = float((weighted_loss_kappa / total_weighted).item())
+            ratio_w = float((weighted_loss_w / total_weighted).item())
+            ratio_hf = float((weighted_loss_hf / total_weighted).item())
             w_numel = int(w_pred_points.numel()) if w_pred_points is not None else 0
             logger.info(
                 "loss stats: kappa_std=%.6g, w_std=%.6g, lambdas(kappa=%.4g,w=%.4g,hf=%.4g), numel(kappa=%d,w=%d)",
@@ -147,6 +162,12 @@ def total_loss(
                 float(lambda_hf),
                 int(kappa_pred.numel()),
                 w_numel,
+            )
+            logger.info(
+                "loss ratios (weighted): kappa=%.3f w=%.3f hf=%.3f",
+                ratio_kappa,
+                ratio_w,
+                ratio_hf,
             )
 
     output["loss"] = loss

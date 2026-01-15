@@ -125,10 +125,12 @@ def compute_stats(paths: list[Path]) -> dict[str, float]:
     def _finalize(prefix: str) -> tuple[float, float]:
         count = accum[f"{prefix}_count"]
         if count == 0:
-            return 0.0, 1.0
+            raise ValueError(f"No valid {prefix} values found; cannot compute stats.")
         mean = accum[f"{prefix}_sum"] / count
         var = accum[f"{prefix}_sumsq"] / count - mean**2
         std = float(np.sqrt(max(var, 0.0)))
+        if not np.isfinite(std) or std <= 0:
+            raise ValueError(f"{prefix}_std must be > 0; got {std}.")
         return float(mean), std
 
     kappa_mean, kappa_std = _finalize("kappa")

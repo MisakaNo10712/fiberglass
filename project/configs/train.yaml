@@ -10,12 +10,12 @@ device: "auto"
 
 # 数据配置
 data:
-  manifest: "data/processed2/manifest.json"
-  samples_dir: "data/processed2"
+  manifest: "project/data/processed2/manifest.json"
+  samples_dir: "project/data/processed2"
   use_dataframe: false
 
-# Dataset stats path (global std for kappa/w)
-stats_path: "data/processed/stats.json"
+# Dataset stats path (global stats for kappa/w)
+stats_path: "project/data/processed2/stats.json"
 
 # 模型配置
 model:

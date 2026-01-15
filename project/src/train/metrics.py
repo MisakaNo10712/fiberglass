@@ -49,7 +49,7 @@ def boundary_error(
 def compute_metrics(batch: dict, outputs: dict, config: dict) -> dict[str, float]:
     """Compute kappa RMSE, optional w RMSE, and boundary error."""
     mask = batch.get("mask")
-    kappa_meas = batch["X"][..., 4]
+    kappa_meas = batch.get("kappa_meas", batch["X"][..., 4])
     kappa_pred = outputs["kappa_pred"]
     metrics = {"rmse_kappa": rmse(kappa_pred, kappa_meas, mask=mask)}
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import numpy as np
 import pandas as pd
 import torch
@@ -37,9 +38,24 @@ def _make_sample(L: int = 32, M: int = 4, N: int = 4, Lx: float = 1.0, Ly: float
     return df
 
 
-def test_train_overfit_smoke():
+def _compute_stats(df: pd.DataFrame) -> dict[str, float]:
+    mask = df["mask"].to_numpy() > 0
+    kappa = df["kappa_t"].to_numpy()[mask]
+    w = df["w"].to_numpy()[mask]
+    return {
+        "kappa_mean": float(np.mean(kappa)),
+        "kappa_std": float(np.std(kappa)),
+        "w_mean": float(np.mean(w)),
+        "w_std": float(np.std(w)),
+    }
+
+
+def test_train_overfit_smoke(tmp_path):
     df = _make_sample()
-    dataset = FiberSequenceDataset(df_list=[df])
+    stats = _compute_stats(df)
+    stats_path = tmp_path / "stats.json"
+    stats_path.write_text(json.dumps(stats), encoding="utf-8")
+    dataset = FiberSequenceDataset(df_list=[df], stats_path=stats_path)
     loader = DataLoader(dataset, batch_size=1, shuffle=True, collate_fn=fiber_sequence_collate)
 
     config = {

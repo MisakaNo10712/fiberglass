@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-import warnings
 from typing import Iterable, Optional
 
 import numpy as np
@@ -23,15 +22,20 @@ __all__ = ["FiberSequenceDataset", "fiber_sequence_collate"]
 
 REQUIRED_COLUMNS = ["x", "y", "tx", "ty", "kappa_t", "mask"]
 OPTIONAL_COLUMNS = ["w"]
+STATS_KEYS = ("kappa_mean", "kappa_std", "w_mean", "w_std")
+KAPPA_EPS = 1e-12
 
 
 def _load_stats(stats_path: Optional[str | Path]) -> dict[str, float]:
     if stats_path is None:
-        return {}
+        raise ValueError(
+            "stats_path is required; run compute_dataset_stats.py to generate stats.json first."
+        )
     path = Path(stats_path)
     if not path.exists():
-        warnings.warn(f"Stats file not found: {path}. Using default std=1.0.")
-        return {}
+        raise FileNotFoundError(
+            f"Stats file not found: {path}. Run compute_dataset_stats.py to generate it."
+        )
     if path.suffix.lower() == ".json":
         with path.open("r", encoding="utf-8") as handle:
             payload = json.load(handle)
@@ -39,10 +43,17 @@ def _load_stats(stats_path: Optional[str | Path]) -> dict[str, float]:
         payload = dict(np.load(path))
     else:
         raise ValueError(f"Unsupported stats file type: {path.suffix}")
-    stats = {}
-    for key in ("kappa_std", "w_std", "kappa_mean", "w_mean"):
-        if key in payload:
-            stats[key] = float(payload[key])
+    missing = [key for key in STATS_KEYS if key not in payload]
+    if missing:
+        raise ValueError(
+            f"Stats file missing keys: {missing}. Run compute_dataset_stats.py to regenerate."
+        )
+    stats = {key: float(payload[key]) for key in STATS_KEYS}
+    for key in ("kappa_std", "w_std"):
+        if not np.isfinite(stats[key]) or stats[key] <= 0:
+            raise ValueError(
+                f"{key} must be > 0 in stats file; run compute_dataset_stats.py to regenerate."
+            )
     return stats
 
 
@@ -95,17 +106,22 @@ def _validate_columns(df: pd.DataFrame) -> None:
         raise ValueError(f"Missing required columns: {missing}")
 
 
-def _df_to_sample(df: pd.DataFrame) -> dict[str, torch.Tensor]:
+def _df_to_sample(
+    df: pd.DataFrame, *, kappa_mean: float, kappa_std: float, eps: float
+) -> dict[str, torch.Tensor]:
     _validate_columns(df)
     arrays = {col: df[col].to_numpy(dtype=np.float32) for col in REQUIRED_COLUMNS}
     x = arrays["x"]
     y = arrays["y"]
     tx = arrays["tx"]
     ty = arrays["ty"]
-    kappa_t = arrays["kappa_t"]
-    X = np.stack([x, y, tx, ty, kappa_t], axis=-1)
+    kappa_raw = arrays["kappa_t"]
+    kappa_in = (kappa_raw.astype(np.float64) - float(kappa_mean)) / (float(kappa_std) + eps)
+    kappa_in = kappa_in.astype(np.float32)
+    X = np.stack([x, y, tx, ty, kappa_in], axis=-1)
     sample = {
         "X": torch.from_numpy(X),
+        "kappa_meas": torch.from_numpy(kappa_raw),
         "mask": torch.from_numpy(arrays["mask"]),
         "x": torch.from_numpy(x),
         "y": torch.from_numpy(y),
@@ -127,8 +143,10 @@ class FiberSequenceDataset(Dataset):
         stats_path: Optional[str | Path] = None,
     ) -> None:
         stats = _load_stats(stats_path)
-        self.kappa_std = float(stats.get("kappa_std", 1.0))
-        self.w_std = float(stats.get("w_std", 1.0))
+        self.kappa_mean = float(stats["kappa_mean"])
+        self.kappa_std = float(stats["kappa_std"])
+        self.w_mean = float(stats["w_mean"])
+        self.w_std = float(stats["w_std"])
 
         if df_list is not None:
             self._df_list = list(df_list)
@@ -160,9 +178,14 @@ class FiberSequenceDataset(Dataset):
             df = self._df_list[idx]
         else:
             df = pd.read_parquet(self._paths[idx])
-        sample = _df_to_sample(df)
+        sample = _df_to_sample(
+            df, kappa_mean=self.kappa_mean, kappa_std=self.kappa_std, eps=KAPPA_EPS
+        )
         sample["kappa_std"] = self.kappa_std
         sample["w_std"] = self.w_std
+        sample["kappa_mean"] = self.kappa_mean
+        sample["w_mean"] = self.w_mean
+        sample["sample_id"] = idx
         return sample
 
 
@@ -181,6 +204,7 @@ def fiber_sequence_collate(batch: list[dict[str, torch.Tensor]]) -> dict[str, to
     mask = torch.zeros((batch_size, max_len), dtype=dtype, device=device)
     x = torch.zeros((batch_size, max_len), dtype=dtype, device=device)
     y = torch.zeros((batch_size, max_len), dtype=dtype, device=device)
+    kappa_meas = torch.zeros((batch_size, max_len), dtype=dtype, device=device)
 
     has_w = any("w_points" in sample for sample in batch)
     if has_w and not all("w_points" in sample for sample in batch):
@@ -201,10 +225,21 @@ def fiber_sequence_collate(batch: list[dict[str, torch.Tensor]]) -> dict[str, to
             y[i, :length] = sample["X"][:, 1]
         if has_w and w_points is not None:
             w_points[i, :length] = sample["w_points"]
+        if "kappa_meas" in sample:
+            kappa_meas[i, :length] = sample["kappa_meas"]
+        else:
+            raise ValueError("kappa_meas missing from sample; check dataset normalization.")
 
-    output = {"X": X, "mask": mask, "x": x, "y": y}
+    output = {"X": X, "mask": mask, "x": x, "y": y, "kappa_meas": kappa_meas}
     if has_w and w_points is not None:
         output["w_points"] = w_points
+    if "sample_id" in batch[0]:
+        sample_ids = []
+        for sample in batch:
+            if "sample_id" not in sample:
+                raise ValueError("sample_id missing from some samples.")
+            sample_ids.append(sample["sample_id"])
+        output["sample_id"] = sample_ids
 
     if "kappa_std" in batch[0]:
         kappa_std = float(batch[0]["kappa_std"])
@@ -219,5 +254,17 @@ def fiber_sequence_collate(batch: list[dict[str, torch.Tensor]]) -> dict[str, to
             if "w_std" in sample and not np.isclose(float(sample["w_std"]), w_std):
                 raise ValueError("Inconsistent w_std values in batch.")
         output["w_std"] = w_std
+    if "kappa_mean" in batch[0]:
+        kappa_mean = float(batch[0]["kappa_mean"])
+        for sample in batch[1:]:
+            if "kappa_mean" in sample and not np.isclose(float(sample["kappa_mean"]), kappa_mean):
+                raise ValueError("Inconsistent kappa_mean values in batch.")
+        output["kappa_mean"] = kappa_mean
+    if "w_mean" in batch[0]:
+        w_mean = float(batch[0]["w_mean"])
+        for sample in batch[1:]:
+            if "w_mean" in sample and not np.isclose(float(sample["w_mean"]), w_mean):
+                raise ValueError("Inconsistent w_mean values in batch.")
+        output["w_mean"] = w_mean
 
     return output

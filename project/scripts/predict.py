@@ -249,7 +249,7 @@ def main() -> int:
                 w_pred_points = trainer._compute_w(a_reshaped, x_for_w, y_for_w)
 
             kappa_pred = outputs["kappa_pred"].detach().cpu().numpy()
-            kappa_meas = batch["X"][..., 4].detach().cpu().numpy()
+            kappa_meas = batch.get("kappa_meas", batch["X"][..., 4]).detach().cpu().numpy()
             x_vals = batch.get("x", batch["X"][..., 0]).detach().cpu().numpy()
             y_vals = batch.get("y", batch["X"][..., 1]).detach().cpu().numpy()
             mask_np = mask.detach().cpu().numpy()

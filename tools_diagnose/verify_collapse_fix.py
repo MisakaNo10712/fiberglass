@@ -14,7 +14,6 @@ from typing import Any
 import numpy as np
 import torch
 import yaml
-from torch.utils.data import DataLoader
 
 # Add project root + src to path for direct script execution
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -109,13 +108,6 @@ def main() -> int:
     )
     if len(dataset) < 2:
         raise SystemExit("Dataset must contain at least 2 samples.")
-    dataloader = DataLoader(
-        dataset,
-        batch_size=2,
-        shuffle=True,
-        collate_fn=fiber_sequence_collate,
-    )
-
     device = resolve_device(config.get("device", "auto"), args.device)
     model = build_model(config)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
@@ -124,7 +116,10 @@ def main() -> int:
     if args.global_step is not None:
         trainer.global_step = int(args.global_step)
 
-    batch = next(iter(dataloader))
+    rng = np.random.default_rng()
+    indices = rng.choice(len(dataset), size=2, replace=False)
+    samples = [dataset[int(i)] for i in indices]
+    batch = fiber_sequence_collate(samples)
     batch = trainer._move_batch(batch)
     outputs = trainer._forward(batch)
     loss_dict = trainer._step_loss(batch, outputs)
@@ -137,10 +132,12 @@ def main() -> int:
     x1 = batch["X"][0]
     x2 = batch["X"][1]
     x_diff = float((x1 - x2).abs().max().item())
-    kappa_true_1 = batch["X"][0, :, 4]
-    kappa_true_2 = batch["X"][1, :, 4]
+    kappa_in_1 = batch["X"][0, :, 4]
+    kappa_in_2 = batch["X"][1, :, 4]
+    kappa_in_diff = float((kappa_in_1 - kappa_in_2).abs().max().item())
+    kappa_true_1 = batch.get("kappa_meas", batch["X"][:, :, 4])[0]
+    kappa_true_2 = batch.get("kappa_meas", batch["X"][:, :, 4])[1]
     kappa_true_diff = float((kappa_true_1 - kappa_true_2).abs().max().item())
-    kappa_channel_diff = kappa_true_diff
 
     w_ratio = None
     if "w_points" in batch and outputs.get("w_pred_points") is not None:
@@ -168,23 +165,45 @@ def main() -> int:
     )
     weighted_loss_hf = float(loss_dict.get("weighted_loss_hf", torch.tensor(0.0)).item())
 
+    weighted_total = weighted_loss_kappa + weighted_loss_hf
+    if weighted_loss_w is not None:
+        weighted_total += weighted_loss_w
     ratios = {
-        "weighted_loss_kappa": weighted_loss_kappa / total_loss if total_loss > 0 else float("nan"),
-        "weighted_loss_hf": weighted_loss_hf / total_loss if total_loss > 0 else float("nan"),
+        "weighted_loss_kappa": weighted_loss_kappa / weighted_total if weighted_total > 0 else float("nan"),
+        "weighted_loss_hf": weighted_loss_hf / weighted_total if weighted_total > 0 else float("nan"),
     }
     if weighted_loss_w is not None:
-        ratios["weighted_loss_w"] = weighted_loss_w / total_loss if total_loss > 0 else float("nan")
+        ratios["weighted_loss_w"] = weighted_loss_w / weighted_total if weighted_total > 0 else float("nan")
 
     lambda_kappa, lambda_hf = trainer._scheduled_lambdas()
+    mask = batch.get("mask")
+    if mask is None:
+        mask_sum = float(batch["X"].shape[0] * batch["X"].shape[1])
+        kappa_vals = batch["X"][..., 4].reshape(-1)
+    else:
+        mask_f = mask > 0
+        mask_sum = float(mask_f.sum().item())
+        kappa_vals = batch["X"][..., 4][mask_f]
+    kappa_in_mean = float(kappa_vals.mean().item()) if kappa_vals.numel() else float("nan")
+    kappa_in_std = float(kappa_vals.std(unbiased=False).item()) if kappa_vals.numel() else float("nan")
+
+    sample_ids = batch.get("sample_id")
+    if sample_ids is not None and len(set(sample_ids)) < 2:
+        raise ValueError(f"Expected distinct sample_ids, got {sample_ids}")
     report = {
         "checkpoint": str(checkpoint_path),
         "config": str(config_path),
+        "sample_ids": sample_ids,
         "a_pred_sample1_first10": [float(v) for v in a1[:10]],
         "a_pred_sample2_first10": [float(v) for v in a2[:10]],
         "a_pred_max_abs_diff": a_diff,
         "x_input_max_abs_diff": x_diff,
-        "kappa_channel_max_abs_diff": kappa_channel_diff,
+        "kappa_in_max_abs_diff": kappa_in_diff,
+        "kappa_channel_max_abs_diff": kappa_in_diff,
         "kappa_true_max_abs_diff": kappa_true_diff,
+        "kappa_in_mean": kappa_in_mean,
+        "kappa_in_std": kappa_in_std,
+        "mask_sum": mask_sum,
         "w_amplitude_ratio": w_ratio,
         "loss_total": total_loss,
         "loss_kappa": loss_kappa,
@@ -197,6 +216,10 @@ def main() -> int:
         "weighted_loss_w": weighted_loss_w,
         "weighted_loss_hf": weighted_loss_hf,
         "loss_ratio": ratios,
+        "kappa_mean": float(batch.get("kappa_mean", torch.tensor(float("nan")))),
+        "kappa_std": float(batch.get("kappa_std", torch.tensor(float("nan")))),
+        "w_mean": float(batch.get("w_mean", torch.tensor(float("nan")))),
+        "w_std": float(batch.get("w_std", torch.tensor(float("nan")))),
         "lambda_kappa": float(lambda_kappa),
         "lambda_w": float(trainer.lambda_w),
         "lambda_hf": float(lambda_hf),
@@ -212,12 +235,15 @@ def main() -> int:
     with txt_path.open("w", encoding="utf-8") as handle:
         handle.write("Verify collapse fix report\n")
         handle.write(f"checkpoint: {checkpoint_path}\n")
+        handle.write(f"sample_ids: {sample_ids}\n")
         handle.write(f"a_pred sample1 first10: {report['a_pred_sample1_first10']}\n")
         handle.write(f"a_pred sample2 first10: {report['a_pred_sample2_first10']}\n")
         handle.write(f"a_pred max|diff|: {a_diff:.6f}\n")
         handle.write(f"X max|diff|: {x_diff:.6f}\n")
-        handle.write(f"kappa channel max|diff|: {kappa_channel_diff:.6f}\n")
+        handle.write(f"kappa_in max|diff|: {kappa_in_diff:.6f}\n")
         handle.write(f"kappa_true max|diff|: {kappa_true_diff:.6f}\n")
+        handle.write(f"kappa_in mean/std: {kappa_in_mean:.6f} / {kappa_in_std:.6f}\n")
+        handle.write(f"mask.sum(): {mask_sum:.2f}\n")
         handle.write(f"w amplitude ratio: {w_ratio}\n")
         handle.write(f"loss total: {total_loss:.6f}\n")
         handle.write(f"loss_kappa: {loss_kappa:.6f}\n")

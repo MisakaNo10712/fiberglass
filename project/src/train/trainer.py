@@ -20,8 +20,11 @@ from src.basis.dct2 import hf_weights, w_from_coeff
 from src.losses.losses import total_loss
 from src.operators.curvature_projection import kappa_t_from_coeff
 from src.train.metrics import compute_metrics
+from src.utils import setup_logger
 
 __all__ = ["Trainer"]
+
+logger = setup_logger("trainer")
 
 
 def _prefix_metrics(prefix: str, metrics: dict[str, float]) -> dict[str, float]:
@@ -115,11 +118,13 @@ class Trainer:
         return boundary & (mask > 0)
 
     def _step_loss(self, batch: dict[str, Tensor], outputs: dict[str, Tensor]) -> dict[str, Tensor]:
-        kappa_meas = batch["X"][..., 4]
+        kappa_meas = batch.get("kappa_meas", batch["X"][..., 4])
         mask = batch.get("mask")
         w_true = batch.get("w_points")
 
+        kappa_mean = batch["kappa_mean"]
         kappa_std = batch["kappa_std"]
+        w_mean = batch["w_mean"]
         w_std = batch["w_std"]
 
         lambda_kappa, lambda_hf = self._scheduled_lambdas()
@@ -141,7 +146,9 @@ class Trainer:
             mask_w=mask,
             bc_pred=bc_pred,
             bc_mask=bc_mask,
+            kappa_mean=kappa_mean,
             kappa_std=kappa_std,
+            w_mean=w_mean,
             w_std=w_std,
             lambda_kappa=lambda_kappa,
             lambda_hf=lambda_hf,
@@ -172,6 +179,36 @@ class Trainer:
             batch = self._move_batch(batch)
             outputs = self._forward(batch)
             loss_dict = self._step_loss(batch, outputs)
+
+            if self.loss_log_every_n > 0 and self.global_step % self.loss_log_every_n == 0:
+                mask = batch.get("mask")
+                if mask is None:
+                    mask_sum = float(batch["X"].shape[0] * batch["X"].shape[1])
+                    kappa_vals = batch["X"][..., 4].reshape(-1)
+                else:
+                    mask_f = mask > 0
+                    mask_sum = float(mask_f.sum().item())
+                    kappa_vals = batch["X"][..., 4][mask_f]
+                if kappa_vals.numel() > 0:
+                    kappa_mean = float(kappa_vals.mean().item())
+                    kappa_std = float(kappa_vals.std(unbiased=False).item())
+                else:
+                    kappa_mean = float("nan")
+                    kappa_std = float("nan")
+
+                a_diff = float("nan")
+                if outputs["a"].shape[0] >= 2:
+                    idx = torch.randperm(outputs["a"].shape[0], device=outputs["a"].device)[:2]
+                    a_diff = float((outputs["a"][idx[0]] - outputs["a"][idx[1]]).abs().max().item())
+
+                logger.info(
+                    "diag step %d: mask.sum=%.2f, kappa_in mean=%.4f std=%.4f, max|a1-a2|=%.6f",
+                    self.global_step,
+                    mask_sum,
+                    kappa_mean,
+                    kappa_std,
+                    a_diff,
+                )
 
             self.optimizer.zero_grad(set_to_none=True)
             loss_dict["loss"].backward()
