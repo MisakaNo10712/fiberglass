@@ -33,3 +33,5 @@
    - Set `curriculum.enabled=true`, `curriculum.stageA_steps`, `curriculum.stageB_warmup_steps` in `project/configs/train.yaml`.
 3) Verify:
    `python tools_diagnose/verify_collapse_fix.py --checkpoint runs/<run_name>/checkpoint.pt --device cuda`
+   PYTHONPATH=../project python ../tools_diagnose/verify_collapse_fix.py --checkpoint runs/20260115-152854/checkpoint.pt --device cuda
+
