@@ -111,15 +111,23 @@ def _validate_columns(df: pd.DataFrame) -> None:
 
 
 def _df_to_sample(
-    df: pd.DataFrame, *, kappa_mean: float, kappa_std: float, eps: float
+    df: pd.DataFrame,
+    *,
+    kappa_mean: float,
+    kappa_std: float,
+    eps: float,
+    coord_scale: float,
+    kappa_meas_scale: float,
 ) -> dict[str, torch.Tensor]:
     _validate_columns(df)
     arrays = {col: df[col].to_numpy(dtype=np.float32) for col in REQUIRED_COLUMNS}
-    x = arrays["x"]
-    y = arrays["y"]
+    coord_scale_f = np.float32(coord_scale)
+    x = arrays["x"] * coord_scale_f
+    y = arrays["y"] * coord_scale_f
     tx = arrays["tx"]
     ty = arrays["ty"]
-    kappa_raw = arrays["kappa_t"]
+    kappa_scale_f = np.float32(kappa_meas_scale)
+    kappa_raw = arrays["kappa_t"] * kappa_scale_f
     kappa_in = (kappa_raw.astype(np.float64) - float(kappa_mean)) / (float(kappa_std) + eps)
     kappa_in = kappa_in.astype(np.float32)
     X = np.stack([x, y, tx, ty, kappa_in], axis=-1)
@@ -145,10 +153,14 @@ class FiberSequenceDataset(Dataset):
         samples_dir: Optional[str | Path] = None,
         df_list: Optional[Iterable[pd.DataFrame]] = None,
         stats_path: Optional[str | Path] = None,
+        coord_scale: float = 1.0,
+        kappa_meas_scale: float = 1.0,
     ) -> None:
         stats = _load_stats(stats_path)
-        self.kappa_mean = float(stats["kappa_mean"])
-        self.kappa_std = float(stats["kappa_std"])
+        self.coord_scale = float(coord_scale)
+        self.kappa_meas_scale = float(kappa_meas_scale)
+        self.kappa_mean = float(stats["kappa_mean"]) * self.kappa_meas_scale
+        self.kappa_std = float(stats["kappa_std"]) * self.kappa_meas_scale
         self.w_mean = float(stats["w_mean"])
         self.w_std = float(stats["w_std"])
 
@@ -183,7 +195,12 @@ class FiberSequenceDataset(Dataset):
         else:
             df = pd.read_parquet(self._paths[idx])
         sample = _df_to_sample(
-            df, kappa_mean=self.kappa_mean, kappa_std=self.kappa_std, eps=KAPPA_EPS
+            df,
+            kappa_mean=self.kappa_mean,
+            kappa_std=self.kappa_std,
+            eps=KAPPA_EPS,
+            coord_scale=self.coord_scale,
+            kappa_meas_scale=self.kappa_meas_scale,
         )
         sample["kappa_std"] = self.kappa_std
         sample["w_std"] = self.w_std

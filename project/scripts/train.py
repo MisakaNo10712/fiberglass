@@ -76,6 +76,8 @@ def build_dataloaders(config: dict[str, Any]) -> tuple[DataLoader, DataLoader]:
         samples_dir=data_cfg.get("samples_dir"),
         df_list=data_cfg.get("df_list") if data_cfg.get("use_dataframe") else None,
         stats_path=config.get("stats_path"),
+        coord_scale=float(data_cfg.get("coord_scale", 1.0)),
+        kappa_meas_scale=float(data_cfg.get("kappa_meas_scale", 1.0)),
     )
     train_cfg = config.get("train", {})
     batch_size = int(train_cfg.get("batch_size", 8))

@@ -274,6 +274,7 @@ class Trainer:
         path.parent.mkdir(parents=True, exist_ok=True)
         payload = {
             "epoch": epoch,
+            "global_step": self.global_step,
             "model_state": self.model.state_dict(),
             "optimizer_state": self.optimizer.state_dict(),
             "metrics": metrics,
@@ -286,4 +287,6 @@ class Trainer:
         self.model.load_state_dict(checkpoint["model_state"])
         if "optimizer_state" in checkpoint:
             self.optimizer.load_state_dict(checkpoint["optimizer_state"])
+        if "global_step" in checkpoint:
+            self.global_step = int(checkpoint["global_step"])
         return checkpoint

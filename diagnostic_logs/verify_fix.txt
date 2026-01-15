@@ -1,23 +1,42 @@
 Verify collapse fix report
-checkpoint: runs/20260115-183041/checkpoint.pt
-sample_ids: [5, 8]
-a_pred sample1 first10: [-0.004114516079425812, -0.0052558183670043945, -0.0007187016308307648, -5.2154529839754105e-05, 0.0017293840646743774, -0.0017081890255212784, 0.00022688842727802694, 0.001527668908238411, 0.0003784671425819397, -0.00026998622342944145]
-a_pred sample2 first10: [-0.004114516079425812, -0.0052558183670043945, -0.000718703493475914, -5.2155693992972374e-05, 0.0017293840646743774, -0.0017081871628761292, 0.0002268856333103031, 0.0015276691410690546, 0.00037846341729164124, -0.000269982498139143]
+checkpoint: runs/20260115-221252/checkpoint.pt
+sample_ids: [5, 11]
+a_pred sample1 first10: [-0.004114516079425812, -0.0052558183670043945, -0.0007187016308307648, -5.21540641784668e-05, 0.0017293840646743774, -0.0017081890255212784, 0.00022688842727802694, 0.001527668908238411, 0.0003784671425819397, -0.00026998622342944145]
+a_pred sample2 first10: [-0.004114523530006409, -0.005255822092294693, -0.0007187090814113617, -5.2155228331685066e-05, 0.0017293859273195267, -0.0017081927508115768, 0.00022688097669743001, 0.0015276747290045023, 0.0003784559667110443, -0.000269994605332613]
 a_pred max|diff|: 0.000000
-X max|diff|: 3.645715
-kappa_in max|diff|: 3.645715
-kappa_true max|diff|: 0.000046
-kappa_in mean/std: -0.251949 / 1.223675
+X max|diff|: 8.506663
+X masked max|diff|: 8.506663
+kappa_in max|diff|: 8.506663
+kappa_in masked max|diff|: 8.506663
+kappa_true max|diff|: 0.000106
+kappa_in mean/std: -0.083983 / 0.727866
+x min/max: 0.000000 / 0.300000
+y min/max: 0.000000 / 0.951952
+x_range/Lx: 1.000000
+y_range/Ly: 0.951952
+kappa_meas abs_max/mean/std: 0.000091 / -0.000001 / 0.000009
+kappa_pred abs_max/mean/std: 1.191737 / 0.027472 / 0.370544
+scale_ratio_std: 4.077927e+04
+scale_ratio_max: 1.309240e+04
+kappa_meas_hat abs_max/mean/std: 7.297405 / -0.083983 / 0.727866
+kappa_pred_hat abs_max/mean/std: 95462.257812 / 2200.620117 / 29681.857422
 mask.sum(): 516.00
-w amplitude ratio: 0.2893823627117778
-loss total: 562.391663
-loss_kappa: 20412.263672
-loss_w: 1.0544419288635254
+w amplitude ratio: 0.4340742501617292
+global_step: 54 (source=checkpoint)
+schedule progress: 0.027500 (stageA_steps=0, stageB_warmup_steps=2000)
+loss total: 562.330505
+loss_kappa: 20412.269531
+loss_w: 0.9931145906448364
 loss_hf: 0.000069
-raw_loss_kappa: 20412.263672
-raw_loss_w: 1.0544419288635254
+raw_loss_kappa: 20412.269531
+raw_loss_w: 0.9931145906448364
 raw_loss_hf: 0.000069
-weighted_loss_kappa: 561.337219
-weighted_loss_w: 1.0544419288635254
+weighted_loss_kappa: 561.337402
+weighted_loss_w: 0.9931145906448364
 weighted_loss_hf: 0.000000
-loss ratios: {'weighted_loss_kappa': 0.9981250754559995, 'weighted_loss_hf': 0.0, 'weighted_loss_w': 0.0018749245440005582}
+loss ratios: {'weighted_loss_kappa': 0.9982339308276227, 'weighted_loss_hf': 0.0, 'weighted_loss_w': 0.0017660691723773187}
+unit sanity summary:
+- coord_scale=1, kappa_meas_scale=1
+- x_range/Lx=1.0000, y_range/Ly=0.9520
+- scale_ratio_std=4.078e+04, scale_ratio_max=1.309e+04
+- WARNING: kappa_pred vs kappa_meas scale differs by >1e3; check x/y vs Lx/Ly units (kx=m*pi/Lx, d2 includes kx^2) and kappa_meas scaling.
