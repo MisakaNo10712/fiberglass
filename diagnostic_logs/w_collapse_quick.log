@@ -1,0 +1,22 @@
+Loaded 5418 rows
+
+=== Amplitude ===
+max|w_true|: 0.046164
+max|w_pred|: 0.001283
+Ratio: 0.0278
+
+=== Collapse Check ===
+Cross-sample variance: 0.00000000
+Spatial variance: 0.00042390
+*** SEVERE COLLAPSE DETECTED ***
+
+=== Error ===
+MAE: 0.00108844
+RMSE: 0.00375403
+
+Results saved to diagnostic_figs/w_collapse_results.json
+
+============================================================
+CONCLUSION:
+X SEVERE COLLAPSE: Different samples produce identical w_pred
+X AMPLITUDE SUPPRESSED: w_pred only 2.8% of w_true

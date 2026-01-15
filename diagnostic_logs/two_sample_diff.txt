@@ -1,0 +1,23 @@
+Two-Sample Difference Check
+============================================================
+
+Sample 1: project/data/processed2/merged_fibers_output_z_m0p005.parquet
+Sample 2: project/data/processed2/merged_fibers_output_z_m0p010.parquet
+
+Sample 1 coefficients:
+  Mean: 0.01681837, Std: 0.05722837
+  Values: [ 0.03090071  0.07633696 -0.05108402  0.05028832  0.08439043 -0.02177071
+ -0.09631334  0.09261704 -0.10194984  0.0654318   0.01876699  0.00208727
+  0.02755771  0.03536139  0.04968925  0.006784  ]
+
+Sample 2 coefficients:
+  Mean: 0.01681840, Std: 0.05722838
+  Values: [ 0.03090081  0.07633696 -0.05108402  0.05028838  0.08439042 -0.0217707
+ -0.09631334  0.09261702 -0.10194989  0.06543186  0.018767    0.00208733
+  0.02755778  0.03536148  0.0496892   0.00678411]
+
+Difference:
+  Mean: 0.0000000445
+  Max:  0.0000001043
+
+Conclusion: LIKELY COLLAPSE

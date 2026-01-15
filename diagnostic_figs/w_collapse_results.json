@@ -1,0 +1,14 @@
+{
+  "amplitude": {
+    "w_true_max": 0.0461642406880855,
+    "w_pred_max": 0.0012825962621718,
+    "ratio": 0.02778332846061139
+  },
+  "collapse": {
+    "point_var_mean": 0.0,
+    "is_collapsed": true
+  },
+  "error": {
+    "mae": 0.001088444620846239
+  }
+}

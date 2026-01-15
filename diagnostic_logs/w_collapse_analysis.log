@@ -1,0 +1,106 @@
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.tight_layout()
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+  plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+[INFO] 加载 5418 行数据
+[INFO] 列名: ['sample_id', 'sample_name', 'point_id', 'w_pred', 'w_true', 'w_diff', 'w_abs_error', 'w_sq_error']
+
+=== 1. 全局幅值对比 ===
+w_true 范围: [-0.046164, 0.046164]
+w_pred 范围: [-0.001241, 0.001283]
+max|w_true|: 0.046164
+max|w_pred|: 0.001283
+幅值比 (pred/true): 0.0278
+
+=== 2. 条件塌缩检查 ===
+跨样本方差 (同一point_id不同sample的w_pred):
+  均值: 0.00000000
+  中位数: 0.00000000
+  最大值: 0.00000000
+
+空间方差 (同一sample不同point的w_pred):
+  均值: 0.00042390
+  中位数: 0.00042390
+  最大值: 0.00042390
+
+⚠️  检测到严重塌缩！不同样本在同一位置的 w_pred 几乎相同
+
+=== 3. 误差统计 ===
+MAE: 0.00108844
+RMSE: 0.00375403
+Max Error: 0.04672353
+
+[INFO] 图表已保存: /home/misaka/fiberglass/diagnostic_figs/w_collapse_analysis.png
+Traceback (most recent call last):
+  File "/home/misaka/fiberglass/tools_diagnose/analyze_w_collapse.py", line 191, in <module>
+    results = analyze_w_collapse(csv_path, output_dir="/home/misaka/fiberglass/diagnostic_figs")
+  File "/home/misaka/fiberglass/tools_diagnose/analyze_w_collapse.py", line 183, in analyze_w_collapse
+    json.dump(results, f, indent=2)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/misaka/miniconda3/lib/python3.13/json/__init__.py", line 181, in dump
+    for chunk in iterable:
+                 ^^^^^^^^
+  File "/home/misaka/miniconda3/lib/python3.13/json/encoder.py", line 435, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/home/misaka/miniconda3/lib/python3.13/json/encoder.py", line 409, in _iterencode_dict
+    yield from chunks
+  File "/home/misaka/miniconda3/lib/python3.13/json/encoder.py", line 409, in _iterencode_dict
+    yield from chunks
+  File "/home/misaka/miniconda3/lib/python3.13/json/encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "/home/misaka/miniconda3/lib/python3.13/json/encoder.py", line 182, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type bool is not JSON serializable

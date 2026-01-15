@@ -219,6 +219,7 @@ def main() -> int:
     prediction_rows: list[dict] = []
     coeff_rows: list[dict] = []
     w_rows: list[dict] = []
+    w_compare_rows: list[dict] = []
     metrics_rows: list[dict] = []
     total_kappa_sse = 0.0
     total_kappa_count = 0
@@ -296,6 +297,22 @@ def main() -> int:
                         if w_true is not None:
                             row["w_true"] = float(w_true[i, pid])
                         w_rows.append(row)
+                        if w_true is not None:
+                            w_p = float(w_pred[i, pid])
+                            w_t = float(w_true[i, pid])
+                            w_diff = w_p - w_t
+                            w_compare_rows.append(
+                                {
+                                    "sample_id": sample_idx,
+                                    "sample_name": sample_name,
+                                    "point_id": int(pid),
+                                    "w_pred": w_p,
+                                    "w_true": w_t,
+                                    "w_diff": w_diff,
+                                    "w_abs_error": abs(w_diff),
+                                    "w_sq_error": w_diff * w_diff,
+                                }
+                            )
 
                 kappa_diff = kappa_pred[i, valid] - kappa_meas[i, valid]
                 kappa_mse = float(np.mean(kappa_diff**2)) if kappa_diff.size else float("nan")
@@ -349,6 +366,8 @@ def main() -> int:
     _save_parquet(output_dir / "coeffs.parquet", coeff_rows)
     if w_rows:
         _save_parquet(output_dir / "w_predictions.parquet", w_rows)
+    if w_compare_rows:
+        pd.DataFrame(w_compare_rows).to_csv(output_dir / "w_compare.csv", index=False)
     if metrics_rows:
         pd.DataFrame(metrics_rows).to_csv(output_dir / "prediction_metrics.csv", index=False)
 
