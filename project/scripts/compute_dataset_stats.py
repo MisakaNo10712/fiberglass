@@ -48,7 +48,14 @@ def _resolve_path(base: Path, entry: str) -> Path:
         return path
     if path.exists():
         return path.resolve()
-    return (base / path).resolve()
+    candidate = base / path
+    if candidate.exists():
+        return candidate.resolve()
+    for parent in base.parents:
+        alt = parent / path
+        if alt.exists():
+            return alt.resolve()
+    return candidate.resolve()
 
 
 def _load_manifest_paths(manifest_path: Path) -> list[Path]:
