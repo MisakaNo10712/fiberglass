@@ -1,23 +1,15 @@
-# ========================================
-# 训练配置
-# ========================================
-# 面向光纤路径序列 -> 基函数系数回归的完整训练配置。
+# Stage B: ramp kappa loss (and optionally hf) after Stage A
 
 seed: 42
-
-# 设备: "auto" | "cpu" | "cuda"
 device: "auto"
 
-# 数据配置
 data:
-  manifest: "data/processed2/manifest.json"
-  samples_dir: "data/processed2"
+  manifest: "data/processed/manifest.json"
+  samples_dir: "data/processed"
   use_dataframe: false
 
-# Dataset stats path (global std for kappa/w)
 stats_path: "data/processed/stats.json"
 
-# 模型配置
 model:
   in_features: 5
   d_model: 128
@@ -26,14 +18,12 @@ model:
   out_coeffs: 16
   encoder_type: "auto"
 
-# 基函数配置
 basis:
   M: 4
   N: 4
   Lx: 0.3
   Ly: 1.0
 
-# 训练超参数
 train:
   batch_size: 8
   epochs: 100
@@ -41,7 +31,6 @@ train:
   weight_decay: 0.0
   grad_clip: 1.0
 
-# 损失权重
 loss:
   # huber_delta is applied in normalized space (after / std).
   huber_delta: 1.0
@@ -51,13 +40,11 @@ loss:
   lambda_bc: 0.0
   log_every_n: 100
 
-# Curriculum config (optional)
 curriculum:
   enabled: true
-  stageA_steps: 1000
+  stageA_steps: 0
   stageB_warmup_steps: 2000
 
-# 运行输出
 run:
   save_dir: "runs"
   name: ""

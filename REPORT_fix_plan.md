@@ -14,24 +14,33 @@
 ## Changes Made
 - Added dataset-wide stats computation script: `project/scripts/compute_dataset_stats.py`.
 - Added stats injection into batches (`kappa_std`, `w_std`) in `project/src/datasets/fiber_sequence.py`.
-- Standardized kappa/w losses and added `lambda_kappa` in `project/src/losses/losses.py`.
-- Added curriculum scheduling for `lambda_kappa`/`lambda_hf` in `project/src/train/trainer.py`.
-- Updated config defaults with `stats_path`, `loss.lambda_kappa`, and `loss.lambda_hf=0` in `project/configs/train.yaml`.
-- Added collapse verification script: `tools_diagnose/verify_collapse_fix.py`.
+- Enforced required stds and added raw/weighted loss outputs + logging in `project/src/losses/losses.py`.
+- Added curriculum scheduling and loss logging in `project/src/train/trainer.py`.
+- Updated configs with curriculum defaults, loss logging, and normalized-space Huber delta notes in `project/configs/train.yaml`.
+- Added Stage A/B configs: `project/configs/train_stageA.yaml`, `project/configs/train_stageB.yaml`.
+- Enhanced diagnostics output in `tools_diagnose/verify_collapse_fix.py`.
 
-## Why This Fixes Collapse
-- Standardizing kappa/w by global std prevents scale dominance (kappa/hf overpowering w).
-- `lambda_kappa` decouples kappa loss weight from the default 1.0.
-- Default `lambda_hf=0` removes high-frequency suppression early on.
-- Curriculum keeps Stage A focused on w-supervision, then ramps kappa/hf to avoid early collapse.
+## Why loss_w Was Near Zero
+- kappa loss was always active and dominated the total (no curriculum warmup).
+- std fallback could silently use 1.0, masking true scale and keeping kappa larger.
+- w loss used fewer valid points (mask) and smaller raw magnitude, so its weighted share stayed tiny.
+
+## Why This Fix Should Work
+- Required stds + asserts guarantee normalization is actually applied.
+- Raw vs weighted losses + logging make imbalance visible and debuggable.
+- Stage A trains only w first; Stage B ramps kappa (and optionally hf) to avoid early collapse.
+
+## Expected Metrics After Fix
+- `a_pred max|diff|` should rise above `1e-3`.
+- `loss_w` share should rise above ~10%.
+- `max|w_pred|/max|w_true|` should increase toward `>= 0.3`.
 
 ## How To Run
 1) Compute stats:
    `python project/scripts/compute_dataset_stats.py --config project/configs/train.yaml`
-2) Train (Stage A → Stage B via curriculum):
-   `python project/scripts/train.py --config project/configs/train.yaml`
-   - Set `curriculum.enabled=true`, `curriculum.stageA_steps`, `curriculum.stageB_warmup_steps` in `project/configs/train.yaml`.
-3) Verify:
+2) Train Stage A (w-only):
+   `python project/scripts/train.py --config project/configs/train_stageA.yaml`
+3) Train Stage B (ramp kappa/hf):
+   `python project/scripts/train.py --config project/configs/train_stageB.yaml`
+4) Verify:
    `python tools_diagnose/verify_collapse_fix.py --checkpoint runs/<run_name>/checkpoint.pt --device cuda`
-   PYTHONPATH=../project python ../tools_diagnose/verify_collapse_fix.py --checkpoint runs/20260115-152854/checkpoint.pt --device cuda
-

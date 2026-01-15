@@ -16,8 +16,10 @@ import torch
 import yaml
 from torch.utils.data import DataLoader
 
-# Add src to path for direct script execution
-sys.path.insert(0, str(Path(__file__).parent.parent / "project" / "src"))
+# Add project root + src to path for direct script execution
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR / "project"))
+sys.path.insert(0, str(ROOT_DIR / "project" / "src"))
 
 from datasets import FiberSequenceDataset, fiber_sequence_collate
 from models import MambaCoeffNet
@@ -132,6 +134,14 @@ def main() -> int:
     a2 = a_pred[1].reshape(-1)
     a_diff = float(np.max(np.abs(a1 - a2)))
 
+    x1 = batch["X"][0]
+    x2 = batch["X"][1]
+    x_diff = float((x1 - x2).abs().max().item())
+    kappa_true_1 = batch["X"][0, :, 4]
+    kappa_true_2 = batch["X"][1, :, 4]
+    kappa_true_diff = float((kappa_true_1 - kappa_true_2).abs().max().item())
+    kappa_channel_diff = kappa_true_diff
+
     w_ratio = None
     if "w_points" in batch and outputs.get("w_pred_points") is not None:
         w_pred = outputs["w_pred_points"].detach().cpu().numpy()
@@ -145,12 +155,25 @@ def main() -> int:
     loss_w = float(loss_dict.get("loss_w", torch.tensor(0.0)).item()) if "loss_w" in loss_dict else None
     loss_hf = float(loss_dict.get("loss_hf", torch.tensor(0.0)).item())
 
+    raw_loss_kappa = float(loss_dict.get("raw_loss_kappa", torch.tensor(0.0)).item())
+    raw_loss_w = (
+        float(loss_dict.get("raw_loss_w", torch.tensor(0.0)).item()) if "raw_loss_w" in loss_dict else None
+    )
+    raw_loss_hf = float(loss_dict.get("raw_loss_hf", torch.tensor(0.0)).item())
+    weighted_loss_kappa = float(loss_dict.get("weighted_loss_kappa", torch.tensor(0.0)).item())
+    weighted_loss_w = (
+        float(loss_dict.get("weighted_loss_w", torch.tensor(0.0)).item())
+        if "weighted_loss_w" in loss_dict
+        else None
+    )
+    weighted_loss_hf = float(loss_dict.get("weighted_loss_hf", torch.tensor(0.0)).item())
+
     ratios = {
-        "loss_kappa": loss_kappa / total_loss if total_loss > 0 else float("nan"),
-        "loss_hf": loss_hf / total_loss if total_loss > 0 else float("nan"),
+        "weighted_loss_kappa": weighted_loss_kappa / total_loss if total_loss > 0 else float("nan"),
+        "weighted_loss_hf": weighted_loss_hf / total_loss if total_loss > 0 else float("nan"),
     }
-    if loss_w is not None:
-        ratios["loss_w"] = loss_w / total_loss if total_loss > 0 else float("nan")
+    if weighted_loss_w is not None:
+        ratios["weighted_loss_w"] = weighted_loss_w / total_loss if total_loss > 0 else float("nan")
 
     lambda_kappa, lambda_hf = trainer._scheduled_lambdas()
     report = {
@@ -159,11 +182,20 @@ def main() -> int:
         "a_pred_sample1_first10": [float(v) for v in a1[:10]],
         "a_pred_sample2_first10": [float(v) for v in a2[:10]],
         "a_pred_max_abs_diff": a_diff,
+        "x_input_max_abs_diff": x_diff,
+        "kappa_channel_max_abs_diff": kappa_channel_diff,
+        "kappa_true_max_abs_diff": kappa_true_diff,
         "w_amplitude_ratio": w_ratio,
         "loss_total": total_loss,
         "loss_kappa": loss_kappa,
         "loss_w": loss_w,
         "loss_hf": loss_hf,
+        "raw_loss_kappa": raw_loss_kappa,
+        "raw_loss_w": raw_loss_w,
+        "raw_loss_hf": raw_loss_hf,
+        "weighted_loss_kappa": weighted_loss_kappa,
+        "weighted_loss_w": weighted_loss_w,
+        "weighted_loss_hf": weighted_loss_hf,
         "loss_ratio": ratios,
         "lambda_kappa": float(lambda_kappa),
         "lambda_w": float(trainer.lambda_w),
@@ -183,11 +215,20 @@ def main() -> int:
         handle.write(f"a_pred sample1 first10: {report['a_pred_sample1_first10']}\n")
         handle.write(f"a_pred sample2 first10: {report['a_pred_sample2_first10']}\n")
         handle.write(f"a_pred max|diff|: {a_diff:.6f}\n")
+        handle.write(f"X max|diff|: {x_diff:.6f}\n")
+        handle.write(f"kappa channel max|diff|: {kappa_channel_diff:.6f}\n")
+        handle.write(f"kappa_true max|diff|: {kappa_true_diff:.6f}\n")
         handle.write(f"w amplitude ratio: {w_ratio}\n")
         handle.write(f"loss total: {total_loss:.6f}\n")
         handle.write(f"loss_kappa: {loss_kappa:.6f}\n")
         handle.write(f"loss_w: {loss_w}\n")
         handle.write(f"loss_hf: {loss_hf:.6f}\n")
+        handle.write(f"raw_loss_kappa: {raw_loss_kappa:.6f}\n")
+        handle.write(f"raw_loss_w: {raw_loss_w}\n")
+        handle.write(f"raw_loss_hf: {raw_loss_hf:.6f}\n")
+        handle.write(f"weighted_loss_kappa: {weighted_loss_kappa:.6f}\n")
+        handle.write(f"weighted_loss_w: {weighted_loss_w}\n")
+        handle.write(f"weighted_loss_hf: {weighted_loss_hf:.6f}\n")
         handle.write(f"loss ratios: {ratios}\n")
 
     logger.info("Saved diagnostics to %s and %s", json_path, txt_path)

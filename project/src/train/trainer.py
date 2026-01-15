@@ -54,6 +54,7 @@ class Trainer:
         self.lambda_w = float(loss_cfg.get("lambda_w", 0.0))
         self.lambda_bc = float(loss_cfg.get("lambda_bc", 0.0))
         self.huber_delta = float(loss_cfg.get("huber_delta", 1.0))
+        self.loss_log_every_n = int(loss_cfg.get("log_every_n", 100))
 
         curriculum_cfg = config.get("curriculum", {})
         self.curriculum_enabled = bool(curriculum_cfg.get("enabled", False))
@@ -118,8 +119,8 @@ class Trainer:
         mask = batch.get("mask")
         w_true = batch.get("w_points")
 
-        kappa_std = batch.get("kappa_std", 1.0)
-        w_std = batch.get("w_std", 1.0)
+        kappa_std = batch["kappa_std"]
+        w_std = batch["w_std"]
 
         lambda_kappa, lambda_hf = self._scheduled_lambdas()
 
@@ -147,6 +148,8 @@ class Trainer:
             lambda_w=self.lambda_w,
             lambda_bc=self.lambda_bc,
             huber_delta=self.huber_delta,
+            step=self.global_step,
+            log_every_n=self.loss_log_every_n,
         )
 
     def _scheduled_lambdas(self) -> tuple[float, float]:

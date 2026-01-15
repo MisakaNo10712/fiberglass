@@ -1,0 +1,50 @@
+# Stage A: w-only supervision (kappa/hf off)
+
+seed: 42
+device: "auto"
+
+data:
+  manifest: "data/processed/manifest.json"
+  samples_dir: "data/processed"
+  use_dataframe: false
+
+stats_path: "data/processed/stats.json"
+
+model:
+  in_features: 5
+  d_model: 128
+  n_layers: 4
+  dropout: 0.0
+  out_coeffs: 16
+  encoder_type: "auto"
+
+basis:
+  M: 4
+  N: 4
+  Lx: 0.3
+  Ly: 1.0
+
+train:
+  batch_size: 8
+  epochs: 100
+  lr: 0.001
+  weight_decay: 0.0
+  grad_clip: 1.0
+
+loss:
+  # huber_delta is applied in normalized space (after / std).
+  huber_delta: 1.0
+  lambda_kappa: 0.0
+  lambda_hf: 0.0
+  lambda_w: 1.0
+  lambda_bc: 0.0
+  log_every_n: 100
+
+curriculum:
+  enabled: false
+  stageA_steps: 0
+  stageB_warmup_steps: 0
+
+run:
+  save_dir: "runs"
+  name: ""
