@@ -1,0 +1,2712 @@
+{
+  "created_at": "2026-01-16T01:00:18.614570",
+  "input_path": "project/data/raw",
+  "pattern": "*_top_dedup_filtered.txt",
+  "total_files": 51,
+  "total_rows": 6528,
+  "files": [
+    {
+      "input_file": "project/data/raw/merged_z_m0p002_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p002_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 2.000346008062567e-05,
+          "mean": 1.3688553071063024e-08
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 9.544908889394098e-08,
+          "mean": -1.461062722727446e-05
+        },
+        "v": {
+          "min": -6.863511242652822e-06,
+          "max": 3.0617307241828387e-06,
+          "mean": -3.3624447887534316e-07
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0014846447452933,
+          "mean": -6.742992040464385e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p004_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p004_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 2.000346008062567e-05,
+          "mean": 1.5562912074200532e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.9089820399466765e-07,
+          "mean": -1.461189475040752e-05
+        },
+        "v": {
+          "min": -1.372702248250017e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -4.7643100912636545e-07
+        },
+        "w": {
+          "min": -0.0022407425792501,
+          "max": 0.0014846447452933,
+          "mean": -8.32518658244971e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p006_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p006_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 2.000346008062567e-05,
+          "mean": 2.9756964018471856e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.863473272860447e-07,
+          "mean": -1.4613162270262938e-05
+        },
+        "v": {
+          "min": -2.0590533019282657e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -6.166175519694334e-07
+        },
+        "w": {
+          "min": -0.0033611140168942,
+          "max": 0.0014846447452933,
+          "mean": -9.90738143870292e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p008_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p008_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 2.5837264891873468e-05,
+          "mean": 4.395102804055454e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 3.817964013306305e-07,
+          "mean": -1.4614429798099454e-05
+        },
+        "v": {
+          "min": -2.745404541415854e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -7.56804063534738e-07
+        },
+        "w": {
+          "min": -0.0044814850700934,
+          "max": 0.0014846447452933,
+          "mean": -0.00011489575479960695
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p010_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p010_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 3.2296582000619455e-05,
+          "mean": 5.814508232722709e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 4.772457123966516e-07,
+          "mean": -1.4615697312370294e-05
+        },
+        "v": {
+          "min": -3.43175561176251e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -8.969905991665455e-07
+        },
+        "w": {
+          "min": -0.0056018564411071,
+          "max": 0.0014846447452933,
+          "mean": -0.00013071770201990605
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p012_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p012_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 3.875590216651149e-05,
+          "mean": 7.233913219774985e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 5.726945308466241e-07,
+          "mean": -1.4616964844445376e-05
+        },
+        "v": {
+          "min": -4.118106635841033e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -1.0371771505252226e-06
+        },
+        "w": {
+          "min": -0.0067222279608476,
+          "max": 0.0014846447452933,
+          "mean": -0.00014653965269200708
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p014_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p014_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 4.521522497378589e-05,
+          "mean": 8.653317354713869e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 6.681435585350906e-07,
+          "mean": -1.46182323624855e-05
+        },
+        "v": {
+          "min": -4.804457544795564e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -1.1773637211749745e-06
+        },
+        "w": {
+          "min": -0.0078425997289159,
+          "max": 0.0014846447452933,
+          "mean": -0.00016236160860295918
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p016_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p016_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 5.167453140884933e-05,
+          "mean": 1.007272541579412e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 7.635930414808773e-07,
+          "mean": -1.4619499879246656e-05
+        },
+        "v": {
+          "min": -5.49080898342657e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -1.3175501880705634e-06
+        },
+        "w": {
+          "min": -0.0089629702793614,
+          "max": 0.0014846447452933,
+          "mean": -0.00017818353796457854
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p018_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p018_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 5.813384532285698e-05,
+          "mean": 1.1492131584655988e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 8.590419553302997e-07,
+          "mean": -1.4620767414756219e-05
+        },
+        "v": {
+          "min": -6.177160239083959e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -1.4577367045199264e-06
+        },
+        "w": {
+          "min": -0.0100833413643535,
+          "max": 0.0014846447452933,
+          "mean": -0.00019400547874415868
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p020_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p020_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 6.459316221206238e-05,
+          "mean": 1.2911537068072593e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 9.5449124942836e-07,
+          "mean": -1.4622034929042453e-05
+        },
+        "v": {
+          "min": -6.863511320222354e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -1.5979232388102882e-06
+        },
+        "w": {
+          "min": -0.0112037127192046,
+          "max": 0.0014846447452933,
+          "mean": -0.00020982742562648224
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p022_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p022_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 7.105247914115169e-05,
+          "mean": 1.4330942722332234e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.049940170119712e-06,
+          "mean": -1.4623302460993048e-05
+        },
+        "v": {
+          "min": -7.549862452642553e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -1.7381097714239289e-06
+        },
+        "w": {
+          "min": -0.012324084017725,
+          "max": 0.0014846447452933,
+          "mean": -0.0002256493713002942
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p024_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p024_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 7.751180075788911e-05,
+          "mean": 1.5750346950353297e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.145389802150318e-06,
+          "mean": -1.4624569952197194e-05
+        },
+        "v": {
+          "min": -8.236213294365155e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -1.8782963353439443e-06
+        },
+        "w": {
+          "min": -0.0134444557624457,
+          "max": 0.0014846447452933,
+          "mean": -0.0002414713267320896
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p026_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p026_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 8.397112287941393e-05,
+          "mean": 1.7169752193864309e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.2408376623014811e-06,
+          "mean": -1.4625837528629731e-05
+        },
+        "v": {
+          "min": -8.92256443833254e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -2.0184828938608035e-06
+        },
+        "w": {
+          "min": -0.0145648271930564,
+          "max": 0.0014846447452933,
+          "mean": -0.0002572932771521102
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p028_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p028_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 9.043043033626813e-05,
+          "mean": 1.8589159234954693e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.336287966343278e-06,
+          "mean": -1.46271050103759e-05
+        },
+        "v": {
+          "min": -9.60891568234765e-05,
+          "max": 3.0617307241828387e-06,
+          "mean": -2.1586693723487756e-06
+        },
+        "w": {
+          "min": -0.0156851980473676,
+          "max": 0.0014846447452933,
+          "mean": -0.00027311521177239404
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p030_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p030_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 9.688974186263206e-05,
+          "mean": 2.0008566184265477e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.4317365737729542e-06,
+          "mean": -1.4628372556747425e-05
+        },
+        "v": {
+          "min": -0.00010295267076172664,
+          "max": 3.0617307241828387e-06,
+          "mean": -2.2988558723174287e-06
+        },
+        "w": {
+          "min": -0.0168055689014988,
+          "max": 0.0014846447452933,
+          "mean": -0.00028893714724294523
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p032_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p032_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.00010334905801407604,
+          "mean": 2.142797180442519e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.5271859290540393e-06,
+          "mean": -1.4629640069526708e-05
+        },
+        "v": {
+          "min": -0.00010981618170162564,
+          "max": 3.0617307241828387e-06,
+          "mean": -2.4390424028089124e-06
+        },
+        "w": {
+          "min": -0.0179259402149462,
+          "max": 0.0014846447452933,
+          "mean": -0.00030475909324073755
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p034_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p034_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.00010980838214050335,
+          "mean": 2.284737632944016e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.6226348869159796e-06,
+          "mean": -1.463090758677312e-05
+        },
+        "v": {
+          "min": -0.00011667969038022036,
+          "max": 3.0617307241828387e-06,
+          "mean": -2.5792289699870794e-06
+        },
+        "w": {
+          "min": -0.0190463119632773,
+          "max": 0.0014846447452933,
+          "mean": -0.000320581049659489
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p036_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p036_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.00011626770057369512,
+          "mean": 2.42667811313995e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.7180843402415512e-06,
+          "mean": -1.4632175101348407e-05
+        },
+        "v": {
+          "min": -0.00012354320001426976,
+          "max": 3.0617307241828387e-06,
+          "mean": -2.7194155179140553e-06
+        },
+        "w": {
+          "min": -0.0201666835100677,
+          "max": 0.0014846447452933,
+          "mean": -0.0003364030010351202
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p038_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p038_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.00012272700598851388,
+          "mean": 2.568618924174177e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.8135330447397013e-06,
+          "mean": -1.4633442648933567e-05
+        },
+        "v": {
+          "min": -0.00013040671639124855,
+          "max": 3.0617307241828387e-06,
+          "mean": -2.8596019842514994e-06
+        },
+        "w": {
+          "min": -0.0212870539303025,
+          "max": 0.0014846447452933,
+          "mean": -0.0003522249263013343
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p040_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p040_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.00012918633397034616,
+          "mean": 2.710559225106454e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.9089822388755966e-06,
+          "mean": -1.4634710164428402e-05
+        },
+        "v": {
+          "min": -0.00013727022428476106,
+          "max": 3.0617307241828387e-06,
+          "mean": -2.999788599856073e-06
+        },
+        "w": {
+          "min": -0.0224074262253331,
+          "max": 0.0014846447452933,
+          "mean": -0.00036804689238024074
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p042_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p042_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.0001356456438798965,
+          "mean": 2.8525000616304952e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.0044304338016887e-06,
+          "mean": -1.4635977716524503e-05
+        },
+        "v": {
+          "min": -0.00014413373826594627,
+          "max": 3.0617307241828387e-06,
+          "mean": -3.1399750575713445e-06
+        },
+        "w": {
+          "min": -0.0235277966037912,
+          "max": 0.0014846447452933,
+          "mean": -0.0003838688207662342
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p044_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p044_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.00014210498619509146,
+          "mean": 2.99443974807339e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.099881542638523e-06,
+          "mean": -1.4637245143633368e-05
+        },
+        "v": {
+          "min": -0.0001509972381646509,
+          "max": 3.0617307241828387e-06,
+          "mean": -3.280161814292181e-06
+        },
+        "w": {
+          "min": -0.0246481706795679,
+          "max": 0.0014846447452933,
+          "mean": -0.000399690821918782
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p046_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p046_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.00014856428714751446,
+          "mean": 3.136380905284708e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.1953284133342795e-06,
+          "mean": -1.4638512770083714e-05
+        },
+        "v": {
+          "min": -0.0001578607568619854,
+          "max": 3.0617307241828387e-06,
+          "mean": -3.420348191689679e-06
+        },
+        "w": {
+          "min": -0.0257685400028852,
+          "max": 0.0014846447452933,
+          "mean": -0.00041551272973250255
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p048_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p048_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.00015502359126852222,
+          "mean": 3.2783217302964017e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.290778716122031e-06,
+          "mean": -1.4639780253802486e-05
+        },
+        "v": {
+          "min": -0.0001647242712040891,
+          "max": 3.0617307241828387e-06,
+          "mean": -3.5605346484058892e-06
+        },
+        "w": {
+          "min": -0.0268889105393562,
+          "max": 0.0014846447452933,
+          "mean": -0.0004313346579254945
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_m0p050_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_m0p050_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 0.0001614829085878373,
+          "mean": 3.4202624035728935e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.386227741315624e-06,
+          "mean": -1.4641047749375898e-05
+        },
+        "v": {
+          "min": -0.00017158778178009618,
+          "max": 3.0617307241828387e-06,
+          "mean": -3.7007211575968478e-06
+        },
+        "w": {
+          "min": -0.0280092815244083,
+          "max": 0.0014846447452933,
+          "mean": -0.0004471565999287563
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p000_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p000_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -1.282520229520897e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": -2.07137076024365e-14,
+          "mean": -1.4609359704040173e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 3.0617307241828387e-06,
+          "mean": -1.9605795083248722e-07
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0014846447452933,
+          "mean": -5.160797563499387e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p002_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p002_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -2.7019256504640534e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.9458789338789665e-07,
+          "mean": -1.460809218280344e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 6.86351104195482e-06,
+          "mean": -5.587141423392517e-08
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0014846447452933,
+          "mean": -3.578602861892613e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p004_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p004_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.8300633978313492e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -4.1213312709687086e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 3.891757874232461e-07,
+          "mean": -1.460682466122113e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 1.3727022197859652e-05,
+          "mean": 8.431511766123021e-08
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0022407426359382,
+          "mean": -1.9964082835358934e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p006_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p006_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -1.937794915672564e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -5.540737164175014e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 5.837636851610081e-07,
+          "mean": -1.460555713565492e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 2.0590533792164263e-05,
+          "mean": 2.245016423582439e-07
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0033611138494414,
+          "mean": -4.142138901773657e-06
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p008_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p008_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -2.583726556170016e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -6.960143110971311e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 7.783515989245708e-07,
+          "mean": -1.460428961044234e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 2.745404543051247e-05,
+          "mean": 3.646881709665872e-07
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.004481485083378,
+          "mean": 1.1679805550945069e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p010_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p010_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -3.229658099004448e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -8.379548720942191e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 9.7293941091468e-07,
+          "mean": -1.4603022095676011e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 3.431755641918179e-05,
+          "mean": 5.048746967379164e-07
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0056018563615215,
+          "mean": 2.7501750616148908e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p012_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p012_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -3.875589615376902e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -9.798954717744218e-07
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.1675273262841682e-06,
+          "mean": -1.4601754564728611e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 4.118106844485823e-05,
+          "mean": 6.450612191499247e-07
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0067222275324322,
+          "mean": 4.332369337398703e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p014_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p014_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -4.521522480576362e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -1.1218357809380534e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.3621156234051124e-06,
+          "mean": -1.4600487027929583e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 4.804457558600741e-05,
+          "mean": 7.852478238377389e-07
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.007842599675171,
+          "mean": 5.91456582032044e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p016_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p016_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -5.167453811722426e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -1.2637763589406784e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.556703365993782e-06,
+          "mean": -1.4599219511058131e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 5.490808882698163e-05,
+          "mean": 9.254343538818822e-07
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0089629709186976,
+          "mean": 7.49676004826773e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p018_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p018_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -5.813386141591963e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -1.4057167707961966e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.7512914379449095e-06,
+          "mean": -1.459795199877805e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 6.177159729453182e-05,
+          "mean": 1.06562092581723e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0100833426818336,
+          "mean": 9.078955671847593e-05
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p020_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p020_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -6.459316140592359e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -1.5476577621281899e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 1.945878887907807e-06,
+          "mean": -1.4596684477226358e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 6.863511356133131e-05,
+          "mean": 1.2058073353464818e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.01120371262232,
+          "mean": 0.000106611473916401
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p022_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p022_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -7.10524789208171e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -1.6895982857182184e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.1404667343771418e-06,
+          "mean": -1.4595416965402655e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 7.549862391060378e-05,
+          "mean": 1.3459938752887101e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0123240840542223,
+          "mean": 0.00012243342242716654
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p024_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p024_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -7.751181938738953e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -1.831538416454901e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.335055554238696e-06,
+          "mean": -1.4594149401111243e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 8.236212892090844e-05,
+          "mean": 1.4861805504508492e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0134444568459709,
+          "mean": 0.0001382554018581159
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p026_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p026_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -8.397111969911806e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -1.9734792705535553e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.5296428526667275e-06,
+          "mean": -1.4592881901149035e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 8.922564422272368e-05,
+          "mean": 1.6263669814773685e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.014564827133032,
+          "mean": 0.00015407732461528707
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p028_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p028_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -9.043042483781064e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -2.1154200873708452e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.7242304730639184e-06,
+          "mean": -1.4591614374894739e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 9.608915967683003e-05,
+          "mean": 1.7665534429256948e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0156851975755973,
+          "mean": 0.00016989925124571577
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p030_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p030_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -9.688974196647216e-05,
+          "max": 2.000346008062567e-05,
+          "mean": -2.257360649342146e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 2.918818388191355e-06,
+          "mean": -1.459034685432118e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00010295267059195616,
+          "mean": 1.9067399750494792e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0168055688858235,
+          "mean": 0.0001857211973718277
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p032_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p032_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.00010334906100057327,
+          "max": 2.000346008062567e-05,
+          "mean": -2.3993011523437954e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 3.1134062109229406e-06,
+          "mean": -1.4589079355271525e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.000109816180188891,
+          "mean": 2.046926522014553e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0179259404350821,
+          "mean": 0.00020154314863366486
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p034_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p034_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.00010980839543519074,
+          "max": 2.000346008062567e-05,
+          "mean": -2.5412413768771578e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 3.307994613738735e-06,
+          "mean": -1.4587811839592806e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00011667968617161596,
+          "mean": 2.1871131676829697e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0190463129081382,
+          "mean": 0.00021736512118292523
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p036_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p036_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.00011626768930892282,
+          "max": 2.000346008062567e-05,
+          "mean": -2.6831823777580207e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 3.502582031548169e-06,
+          "mean": -1.4586544282529883e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00012354320518295225,
+          "mean": 2.327299558286443e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0201666826434302,
+          "mean": 0.00023318703097260901
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p038_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p038_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.0001227270463283135,
+          "max": 2.000346008062567e-05,
+          "mean": -2.8251219948270292e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 3.6971710780379423e-06,
+          "mean": -1.4585276758808145e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00013040670153633105,
+          "mean": 2.4674863450396687e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.021287056996839,
+          "mean": 0.0002490090439848404
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p040_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p040_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.00012918633861284116,
+          "max": 2.000346008062567e-05,
+          "mean": -2.96706315065914e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 3.891758217302117e-06,
+          "mean": -1.4584009250635774e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00013727022224868264,
+          "mean": 2.607672722886932e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0224074264297634,
+          "mean": 0.00026483094884382157
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p042_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p042_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.000135645689488701,
+          "max": 2.000346008062567e-05,
+          "mean": -3.1090028480380394e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 4.086347362818992e-06,
+          "mean": -1.4582741642082677e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00014413372497245364,
+          "mean": 2.747859498918523e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0235278004682806,
+          "mean": 0.0002806529512927586
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p044_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p044_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.00014210496085549732,
+          "max": 2.000346008062567e-05,
+          "mean": -3.250944490957946e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 4.280933993678737e-06,
+          "mean": -1.4581474144832446e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00015099724921561472,
+          "mean": 2.888045722761815e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0246481682464846,
+          "mean": 0.00029647482234758247
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p046_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p046_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.00014856429777474663,
+          "max": 2.000346008062567e-05,
+          "mean": -3.392884475802328e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 4.475522042169632e-06,
+          "mean": -1.4580206705257812e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00015786075055252091,
+          "mean": 3.02823239618758e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0257685413841949,
+          "mean": 0.00031229680690694116
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p048_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p048_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.0001550235879861859,
+          "max": 2.000346008062567e-05,
+          "mean": -3.5348258004460323e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 4.670109359680095e-06,
+          "mean": -1.4578939159146636e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00016472427235242695,
+          "mean": 3.1684187353405673e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0268889103329516,
+          "mean": 0.0003281187031239889
+        }
+      }
+    },
+    {
+      "input_file": "project/data/raw/merged_z_p0p050_top_dedup_filtered.txt",
+      "output_file": "project/data/processed_top/merged_z_p0p050_top_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 7,
+      "columns": [
+        "x",
+        "y",
+        "z",
+        "strain",
+        "u",
+        "v",
+        "w"
+      ],
+      "has_header": true,
+      "stats": {
+        "x": {
+          "min": 0.0,
+          "max": 0.3,
+          "mean": 0.1415678367086141
+        },
+        "y": {
+          "min": 0.0020005001250318,
+          "max": 1.0,
+          "mean": 0.4957477562662062
+        },
+        "z": {
+          "min": 0.005,
+          "max": 0.005,
+          "mean": 0.005
+        },
+        "strain": {
+          "min": -0.00016148293188773854,
+          "max": 2.000346008062567e-05,
+          "mean": -3.676765676823149e-06
+        },
+        "u": {
+          "min": -2.5091074136886667e-05,
+          "max": 4.864698682994897e-06,
+          "mean": -1.457767146365222e-05
+        },
+        "v": {
+          "min": -3.037222377318635e-06,
+          "max": 0.00017158778157986605,
+          "mean": 3.3086054939116415e-06
+        },
+        "w": {
+          "min": -0.0014477143162252,
+          "max": 0.0280092838633526,
+          "mean": 0.0003439406920049781
+        }
+      }
+    }
+  ]
+}

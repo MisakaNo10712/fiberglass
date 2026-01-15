@@ -1,0 +1,1030 @@
+{
+  "created_at": "2026-01-16T01:00:41.640050",
+  "input_path": "project/data/processed_top",
+  "pattern": "*.parquet",
+  "total_files": 51,
+  "total_rows": 6528,
+  "note": "kappa_t = (strain_bot - strain_top) / h (h=0.005)",
+  "files": [
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p002_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p002_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p002_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p004_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p004_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p004_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p006_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p006_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p006_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p008_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p008_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p008_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p010_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p010_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p010_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p012_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p012_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p012_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p014_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p014_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p014_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p016_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p016_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p016_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p018_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p018_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p018_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p020_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p020_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p020_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p022_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p022_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p022_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p024_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p024_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p024_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p026_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p026_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p026_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p028_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p028_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p028_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p030_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p030_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p030_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p032_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p032_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p032_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p034_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p034_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p034_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p036_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p036_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p036_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p038_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p038_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p038_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p040_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p040_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p040_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p042_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p042_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p042_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p044_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p044_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p044_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p046_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p046_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p046_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p048_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p048_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p048_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_m0p050_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_m0p050_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_m0p050_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p000_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p000_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p000_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p002_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p002_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p002_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p004_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p004_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p004_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p006_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p006_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p006_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p008_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p008_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p008_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p010_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p010_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p010_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p012_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p012_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p012_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p014_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p014_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p014_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p016_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p016_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p016_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p018_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p018_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p018_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p020_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p020_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p020_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p022_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p022_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p022_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p024_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p024_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p024_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p026_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p026_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p026_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p028_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p028_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p028_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p030_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p030_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p030_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p032_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p032_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p032_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p034_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p034_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p034_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p036_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p036_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p036_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p038_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p038_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p038_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p040_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p040_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p040_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p042_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p042_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p042_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p044_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p044_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p044_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p046_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p046_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p046_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p048_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p048_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p048_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    },
+    {
+      "input_top": "project/data/processed_top/merged_z_p0p050_top_dedup_filtered.parquet",
+      "input_bottom": "project/data/processed_bottom/merged_z_p0p050_bottom_dedup_filtered.parquet",
+      "output_file": "project/data/processed2_pair/merged_z_p0p050_dedup_filtered.parquet",
+      "num_rows": 128,
+      "num_cols": 11,
+      "columns": [
+        "x",
+        "y",
+        "s",
+        "tx",
+        "ty",
+        "strain_top",
+        "strain_bot",
+        "strain_avg",
+        "kappa_t",
+        "mask",
+        "w"
+      ]
+    }
+  ]
+}
