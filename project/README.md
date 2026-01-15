@@ -14,7 +14,7 @@ COMSOL 导出的光纤应变数据（列：`x y z strain u v w`）最小可运�
 - 数据源：COMSOL 导出为纯文本 txt，空格或 Tab 分隔，每行一个点；列为 `x, y, z, strain, u, v, w`。
 - 阶段：包含完整训练闭环，模型为序列编码器（Mamba/CNN）回归系数。
 - 运行环境：Python >= 3.10，Linux/macOS/Windows 均可（无平台相关代码）。
-- 约束：当前不做路径排序、上下表面配对等复杂几何预处理。
+- 预处理：支持路径排序与上下表面配对（stage2），更复杂的几何校正仍未覆盖。
 
 ## 数据格式
 - `x, y, z`：坐标（单位 m，默认为全局坐标系）
@@ -30,12 +30,18 @@ configs/           # 基础配置（包含背景与假设元数据）
 data/
   raw/             # 放置原始 COMSOL 导出的 txt
   processed/       # prepare_dataset 输出的 parquet 与 manifest
+  processed_top/   # 上表面 parquet
+  processed_bottom/ # 下表面 parquet
+  processed2/      # stage2 输出（单面占位）
+  processed2_pair/ # stage2 输出（上下表面配对）
 scripts/
   prepare_dataset.py  # txt -> parquet + manifest CLI
+  prepare_stage2.py   # path 特征 + kappa_t/mask
+  compute_dataset_stats.py  # 统计量计算
   train.py            # 训练入口 CLI
   eval.py             # 评估入口 CLI
 src/
-  io/comsol_txt.py # 读取、基础校验、列统计
+  file_io/comsol_txt.py # 读取、基础校验、列统计
   datasets/        # FiberSequenceDataset + collate
   losses/          # 训练损失
   train/           # Trainer + metrics
@@ -53,38 +59,51 @@ pip install -e .
 ```
 
 ## 使用
-- 预处理（生成 parquet 与 manifest）
+- 预处理（txt -> parquet）
   ```bash
+  # 单面输入
   python scripts/prepare_dataset.py --input data/raw --output data/processed
-  # 指定无表头:
-  python scripts/prepare_dataset.py --input data/raw --no-header
-  # 自定义模式:
-  python scripts/prepare_dataset.py --input data/raw --pattern "*.dat"
 
-  PYTHONPATH=.:src python scripts/prepare_stage2.py --input data/processed --output data/processed2
-
+  # 上下表面输入（推荐）
+  python scripts/prepare_dataset.py --input data/raw --pattern "*_top_dedup_filtered.txt" --output data/processed_top
+  python scripts/prepare_dataset.py --input data/raw --pattern "*_bottom_dedup_filtered.txt" --output data/processed_bottom
   ```
-  - 每个输入文件生成同名 `.parquet` 至 `data/processed/`。
-  - 生成 `manifest.json`，包含处理时间、文件列表、行数、列统计（min/max/mean）、是否有表头、输出路径。
+  - 每个输入文件生成同名 `.parquet` 至输出目录。
+  - 生成 `manifest.json`，包含处理时间、文件列表、行数、列统计、是否有表头、输出路径。
+
+- Stage‑2（路径特征 + kappa_t + mask）
   ```bash
-  python operators/curvature_projection.py
+  # 上下表面配对：kappa_t = (strain_bot - strain_top) / h
+  python scripts/prepare_stage2.py --top data/processed_top --bottom data/processed_bottom --output data/processed2_pair --h 0.005
+
+  # 单面占位：kappa_t = strain / h
+  python scripts/prepare_stage2.py --input data/processed --output data/processed2 --h 0.005
   ```
+  - 配对规则：文件名需包含 `_top_`/`_bottom_`，例如 `merged_z_m0p002_top_dedup_filtered.txt` 与 `merged_z_m0p002_bottom_dedup_filtered.txt`。
+  - 可选参数：`--pair-method s|xy`、`--s-tol`、`--xy-tol`、`--fill-strategy zeros|nearest`、`--order-mode as_is|nn_graph`、`--jump-threshold`、`--k`、`--dedup-eps`。
+
+- 统计量（训练前必须）
+  ```bash
+  python scripts/compute_dataset_stats.py --data_dir data/processed2_pair --output data/processed2_pair/stats.json
+  ```
+
 - 训练入口
   ```bash
-  PYTHONPATH=.:src python scripts/train.py --config configs/train.yaml
+  python scripts/train.py --config configs/train.yaml
   ```
-  - 自动读取 manifest 或单个 parquet 文件并训练。
+  - 确保 `configs/train.yaml` 指向新的数据与 stats：
+    ```yaml
+    data:
+      manifest: "data/processed2_pair/manifest.json"
+      samples_dir: "data/processed2_pair"
+    stats_path: "data/processed2_pair/stats.json"
+    ```
   - 训练输出写入 `runs/<timestamp>/`，包含 `config.yaml`、`metrics.csv`、`checkpoint.pt`。
 
 - 评估入口
   ```bash
   python scripts/eval.py --checkpoint runs/<timestamp>/checkpoint.pt
-  PYTHONPATH=.:src python scripts/predict.py   --checkpoint runs/<run_name>/checkpoint.pt   --data_dir /data/processed2
-bash: run_name: No such file or directory
-python project/scripts/predict.py \
-  --checkpoint /home/misaka/fiberglass/runs/20260115-182551/checkpoint.pt \
-  --data_dir /home/misaka/fiberglass/project/data/processed2
-
+  python scripts/predict.py --checkpoint runs/<timestamp>/checkpoint.pt --data_dir data/processed2_pair
   ```
 
 ## 配置
@@ -95,6 +114,7 @@ python project/scripts/predict.py \
 - txt 无表头怎么办？使用 `--no-header`，脚本会按列序自动赋名 `x y z strain u v w`。
 - 分隔符是空格还是 Tab？两者均自动支持（使用正则分隔）。
 - 为什么行数或列校验失败？脚本要求至少 10 行，且 7 列必须齐全，数据中不得包含 NaN/Inf。
+- 上下表面无法配对？请检查文件名是否含 `_top_`/`_bottom_`，并确保成对出现。
 
 ## 测试
 ```bash

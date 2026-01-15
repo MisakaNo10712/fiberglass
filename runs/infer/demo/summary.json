@@ -1,0 +1,44 @@
+{
+  "inputs": {
+    "top": "project/data/raw/merged_z_m0p002_top_dedup_filtered.txt",
+    "bot": "project/data/raw/merged_z_m0p002_bottom_dedup_filtered.txt",
+    "plate": "project/configs/plate.yaml",
+    "ckpt": "runs/20260116-011009/checkpoint.pt"
+  },
+  "device": "cuda",
+  "config": {
+    "h": 0.01,
+    "Lx": 1.0,
+    "Ly": 0.5,
+    "M": 4,
+    "N": 4,
+    "Nx": 101,
+    "Ny": 51
+  },
+  "norm": {
+    "x_scale": 1.0,
+    "y_scale": 0.5,
+    "kappa_mean": -5.3317219777653516e-06,
+    "kappa_std": 0.0007928427128760252
+  },
+  "num_points": 128,
+  "num_valid": 128,
+  "kappa_rmse": 0.04328766319400786,
+  "w_rmse_points": 0.0010835195191092536,
+  "error_heatmap": true,
+  "pairing": {
+    "method": "s",
+    "fallback": false,
+    "w_source": "top"
+  },
+  "model": {
+    "d_model": 128,
+    "n_layers": 4,
+    "dropout": 0.0,
+    "encoder_type": "auto",
+    "cnn_kernel_size": 5,
+    "cnn_dilation_base": 1,
+    "mlp_hidden": 256,
+    "out_coeffs": 16
+  }
+}
