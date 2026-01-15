@@ -1,0 +1,7 @@
+{
+  "num_samples": 21,
+  "num_points": 5418,
+  "kappa_mse": 0.1380581487892914,
+  "w_mse": 5.1044039916413526e-05,
+  "output_dir": "/home/misaka/fiberglass/runs/20260115-182551"
+}

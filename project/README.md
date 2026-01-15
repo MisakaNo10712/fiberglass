@@ -81,6 +81,9 @@ pip install -e .
   python scripts/eval.py --checkpoint runs/<timestamp>/checkpoint.pt
   PYTHONPATH=.:src python scripts/predict.py   --checkpoint runs/<run_name>/checkpoint.pt   --data_dir /data/processed2
 bash: run_name: No such file or directory
+python project/scripts/predict.py \
+  --checkpoint /home/misaka/fiberglass/runs/20260115-182551/checkpoint.pt \
+  --data_dir /home/misaka/fiberglass/project/data/processed2
 
   ```
 
