@@ -25,7 +25,9 @@ from datetime import datetime
 from pathlib import Path
 
 # 添加 src 到路径（支持直接运行脚本）
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "src"))
 
 from file_io import comsol_txt
 from utils import setup_logger

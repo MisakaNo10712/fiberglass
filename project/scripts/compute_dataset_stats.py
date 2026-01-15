@@ -15,8 +15,10 @@ import numpy as np
 import pandas as pd
 import yaml
 
-# Add src to path for direct script execution
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Add project root + src to path for direct script execution
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(ROOT_DIR / "src"))
 
 from utils import setup_logger
 
