@@ -10,8 +10,8 @@ device: "auto"
 
 # 数据配置
 data:
-  manifest: "data/processed/manifest.json"
-  samples_dir: "data/processed"
+  manifest: "data/processed2/manifest.json"
+  samples_dir: "data/processed2"
   use_dataframe: false
 
 # Dataset stats path (global std for kappa/w)
