@@ -49,10 +49,17 @@ class Trainer:
         self.grad_clip = train_cfg.get("grad_clip")
 
         loss_cfg = config.get("loss", {})
-        self.lambda_hf = float(loss_cfg.get("lambda_hf", 1.0))
+        self.lambda_kappa = float(loss_cfg.get("lambda_kappa", 1.0))
+        self.lambda_hf = float(loss_cfg.get("lambda_hf", 0.0))
         self.lambda_w = float(loss_cfg.get("lambda_w", 0.0))
         self.lambda_bc = float(loss_cfg.get("lambda_bc", 0.0))
         self.huber_delta = float(loss_cfg.get("huber_delta", 1.0))
+
+        curriculum_cfg = config.get("curriculum", {})
+        self.curriculum_enabled = bool(curriculum_cfg.get("enabled", False))
+        self.stageA_steps = int(curriculum_cfg.get("stageA_steps", 0))
+        self.stageB_warmup_steps = int(curriculum_cfg.get("stageB_warmup_steps", 0))
+        self.global_step = 0
 
     def _move_batch(self, batch: dict[str, Tensor]) -> dict[str, Tensor]:
         return {k: v.to(self.device) if isinstance(v, Tensor) else v for k, v in batch.items()}
@@ -111,6 +118,11 @@ class Trainer:
         mask = batch.get("mask")
         w_true = batch.get("w_points")
 
+        kappa_std = batch.get("kappa_std", 1.0)
+        w_std = batch.get("w_std", 1.0)
+
+        lambda_kappa, lambda_hf = self._scheduled_lambdas()
+
         bc_pred = None
         bc_mask = None
         if self.lambda_bc > 0 and outputs.get("w_pred_points") is not None:
@@ -128,11 +140,25 @@ class Trainer:
             mask_w=mask,
             bc_pred=bc_pred,
             bc_mask=bc_mask,
-            lambda_hf=self.lambda_hf,
+            kappa_std=kappa_std,
+            w_std=w_std,
+            lambda_kappa=lambda_kappa,
+            lambda_hf=lambda_hf,
             lambda_w=self.lambda_w,
             lambda_bc=self.lambda_bc,
             huber_delta=self.huber_delta,
         )
+
+    def _scheduled_lambdas(self) -> tuple[float, float]:
+        if not self.curriculum_enabled:
+            return self.lambda_kappa, self.lambda_hf
+        if self.global_step < self.stageA_steps:
+            return 0.0, 0.0
+        if self.stageB_warmup_steps <= 0:
+            return self.lambda_kappa, self.lambda_hf
+        progress = (self.global_step - self.stageA_steps + 1) / float(self.stageB_warmup_steps)
+        progress = max(0.0, min(1.0, progress))
+        return self.lambda_kappa * progress, self.lambda_hf * progress
 
     def train_one_epoch(self, dataloader) -> dict[str, float]:
         self.model.train()
@@ -149,6 +175,7 @@ class Trainer:
             if self.grad_clip is not None:
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), float(self.grad_clip))
             self.optimizer.step()
+            self.global_step += 1
 
             metrics = compute_metrics(batch, outputs, self.config)
             batch_size = batch["X"].shape[0]

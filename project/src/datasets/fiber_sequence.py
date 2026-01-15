@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import warnings
 from typing import Iterable, Optional
 
 import numpy as np
@@ -22,6 +23,27 @@ __all__ = ["FiberSequenceDataset", "fiber_sequence_collate"]
 
 REQUIRED_COLUMNS = ["x", "y", "tx", "ty", "kappa_t", "mask"]
 OPTIONAL_COLUMNS = ["w"]
+
+
+def _load_stats(stats_path: Optional[str | Path]) -> dict[str, float]:
+    if stats_path is None:
+        return {}
+    path = Path(stats_path)
+    if not path.exists():
+        warnings.warn(f"Stats file not found: {path}. Using default std=1.0.")
+        return {}
+    if path.suffix.lower() == ".json":
+        with path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    elif path.suffix.lower() == ".npz":
+        payload = dict(np.load(path))
+    else:
+        raise ValueError(f"Unsupported stats file type: {path.suffix}")
+    stats = {}
+    for key in ("kappa_std", "w_std", "kappa_mean", "w_mean"):
+        if key in payload:
+            stats[key] = float(payload[key])
+    return stats
 
 
 def _resolve_path(base: Path, entry: str) -> Path:
@@ -102,7 +124,12 @@ class FiberSequenceDataset(Dataset):
         manifest_path: Optional[str | Path] = None,
         samples_dir: Optional[str | Path] = None,
         df_list: Optional[Iterable[pd.DataFrame]] = None,
+        stats_path: Optional[str | Path] = None,
     ) -> None:
+        stats = _load_stats(stats_path)
+        self.kappa_std = float(stats.get("kappa_std", 1.0))
+        self.w_std = float(stats.get("w_std", 1.0))
+
         if df_list is not None:
             self._df_list = list(df_list)
             if not self._df_list:
@@ -133,7 +160,10 @@ class FiberSequenceDataset(Dataset):
             df = self._df_list[idx]
         else:
             df = pd.read_parquet(self._paths[idx])
-        return _df_to_sample(df)
+        sample = _df_to_sample(df)
+        sample["kappa_std"] = self.kappa_std
+        sample["w_std"] = self.w_std
+        return sample
 
 
 def fiber_sequence_collate(batch: list[dict[str, torch.Tensor]]) -> dict[str, torch.Tensor]:
@@ -175,4 +205,19 @@ def fiber_sequence_collate(batch: list[dict[str, torch.Tensor]]) -> dict[str, to
     output = {"X": X, "mask": mask, "x": x, "y": y}
     if has_w and w_points is not None:
         output["w_points"] = w_points
+
+    if "kappa_std" in batch[0]:
+        kappa_std = float(batch[0]["kappa_std"])
+        for sample in batch[1:]:
+            if "kappa_std" in sample and not np.isclose(float(sample["kappa_std"]), kappa_std):
+                raise ValueError("Inconsistent kappa_std values in batch.")
+        output["kappa_std"] = kappa_std
+
+    if "w_std" in batch[0]:
+        w_std = float(batch[0]["w_std"])
+        for sample in batch[1:]:
+            if "w_std" in sample and not np.isclose(float(sample["w_std"]), w_std):
+                raise ValueError("Inconsistent w_std values in batch.")
+        output["w_std"] = w_std
+
     return output

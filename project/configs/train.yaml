@@ -14,6 +14,9 @@ data:
   samples_dir: "data/processed"
   use_dataframe: false
 
+# Dataset stats path (global std for kappa/w)
+stats_path: "data/processed/stats.json"
+
 # 模型配置
 model:
   in_features: 5
@@ -41,9 +44,16 @@ train:
 # 损失权重
 loss:
   huber_delta: 1.0
-  lambda_hf: 0.01
+  lambda_kappa: 1.0
+  lambda_hf: 0.0
   lambda_w: 1.0
   lambda_bc: 0.0
+
+# Curriculum config (optional)
+curriculum:
+  enabled: false
+  stageA_steps: 0
+  stageB_warmup_steps: 0
 
 # 运行输出
 run:

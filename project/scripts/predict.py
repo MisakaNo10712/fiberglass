@@ -63,6 +63,7 @@ def build_dataloader(config: dict[str, Any]) -> tuple[DataLoader, FiberSequenceD
         manifest_path=data_cfg.get("manifest"),
         samples_dir=data_cfg.get("samples_dir"),
         df_list=data_cfg.get("df_list") if data_cfg.get("use_dataframe") else None,
+        stats_path=config.get("stats_path"),
     )
     train_cfg = config.get("train", {})
     batch_size = int(train_cfg.get("batch_size", 8))

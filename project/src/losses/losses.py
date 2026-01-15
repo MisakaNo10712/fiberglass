@@ -52,6 +52,12 @@ def optional_bc_loss(w_pred_on_boundary: Tensor, mask_boundary: Optional[Tensor]
     return loss.sum() / denom
 
 
+def _as_scalar_tensor(value: float | Tensor, ref: Tensor) -> Tensor:
+    if isinstance(value, Tensor):
+        return value.to(device=ref.device, dtype=ref.dtype)
+    return torch.tensor(float(value), device=ref.device, dtype=ref.dtype)
+
+
 def total_loss(
     kappa_pred: Tensor,
     kappa_meas: Tensor,
@@ -64,16 +70,22 @@ def total_loss(
     mask_w: Optional[Tensor] = None,
     bc_pred: Optional[Tensor] = None,
     bc_mask: Optional[Tensor] = None,
+    kappa_std: float | Tensor = 1.0,
+    w_std: float | Tensor = 1.0,
+    lambda_kappa: float = 1.0,
     lambda_hf: float = 1.0,
     lambda_w: float = 0.0,
     lambda_bc: float = 0.0,
     huber_delta: float = 1.0,
 ) -> dict[str, Tensor]:
     """Compute total loss and return a dict of components."""
-    loss_kappa = huber_loss(kappa_pred, kappa_meas, mask=mask, delta=huber_delta)
+    kappa_std_t = _as_scalar_tensor(kappa_std, kappa_pred).clamp_min(1e-8)
+    kappa_pred_hat = kappa_pred / kappa_std_t
+    kappa_meas_hat = kappa_meas / kappa_std_t
+    loss_kappa = huber_loss(kappa_pred_hat, kappa_meas_hat, mask=mask, delta=huber_delta)
     loss_hf = hf_l2_loss(a, hf_W)
 
-    loss = loss_kappa + lambda_hf * loss_hf
+    loss = lambda_kappa * loss_kappa + lambda_hf * loss_hf
     output = {
         "loss": loss,
         "loss_kappa": loss_kappa,
@@ -82,7 +94,10 @@ def total_loss(
 
     if w_pred_points is not None and w_true_points is not None:
         w_mask = mask_w if mask_w is not None else mask
-        loss_w = huber_loss(w_pred_points, w_true_points, mask=w_mask, delta=huber_delta)
+        w_std_t = _as_scalar_tensor(w_std, w_pred_points).clamp_min(1e-8)
+        w_pred_hat = w_pred_points / w_std_t
+        w_true_hat = w_true_points / w_std_t
+        loss_w = huber_loss(w_pred_hat, w_true_hat, mask=w_mask, delta=huber_delta)
         output["loss_w"] = loss_w
         loss = loss + lambda_w * loss_w
 

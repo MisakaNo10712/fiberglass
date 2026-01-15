@@ -1,0 +1,201 @@
+#!/usr/bin/env python
+"""
+Verify collapse mitigation by comparing two samples and loss breakdown.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+import torch
+import yaml
+from torch.utils.data import DataLoader
+
+# Add src to path for direct script execution
+sys.path.insert(0, str(Path(__file__).parent.parent / "project" / "src"))
+
+from datasets import FiberSequenceDataset, fiber_sequence_collate
+from models import MambaCoeffNet
+from train import Trainer
+from utils import setup_logger
+
+logger = setup_logger("verify_collapse_fix")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Verify collapse fix diagnostics")
+    parser.add_argument("--checkpoint", type=str, default=None)
+    parser.add_argument("--config", type=str, default=None)
+    parser.add_argument("--manifest", type=str, default=None)
+    parser.add_argument("--data_dir", type=str, default=None)
+    parser.add_argument("--device", type=str, default=None, help="cpu|cuda|auto")
+    parser.add_argument("--global_step", type=int, default=None)
+    parser.add_argument("--output_dir", type=str, default="diagnostic_logs")
+    return parser.parse_args()
+
+
+def load_config(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        raise FileNotFoundError(f"Config file not found: {path}")
+    with path.open("r", encoding="utf-8") as handle:
+        return yaml.safe_load(handle)
+
+
+def resolve_device(config_device: Any, override: str | None) -> torch.device:
+    device_value = override if override is not None else config_device
+    if isinstance(device_value, dict):
+        device_value = device_value.get("type", "auto")
+    device_value = device_value or "auto"
+    if device_value == "auto":
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    return torch.device(device_value)
+
+
+def build_model(config: dict[str, Any]) -> MambaCoeffNet:
+    model_cfg = config.get("model", {})
+    basis_cfg = config.get("basis", {})
+    out_coeffs = int(model_cfg.get("out_coeffs", basis_cfg.get("M") * basis_cfg.get("N")))
+    model_cfg["out_coeffs"] = out_coeffs
+    return MambaCoeffNet(
+        in_features=int(model_cfg.get("in_features", 5)),
+        d_model=int(model_cfg.get("d_model", 128)),
+        n_layers=int(model_cfg.get("n_layers", 4)),
+        dropout=float(model_cfg.get("dropout", 0.0)),
+        out_coeffs=out_coeffs,
+        encoder_type=str(model_cfg.get("encoder_type", "auto")),
+    )
+
+
+def find_latest_checkpoint(run_root: Path) -> Path:
+    candidates = list(run_root.rglob("checkpoint.pt"))
+    if not candidates:
+        raise FileNotFoundError(f"No checkpoints found under {run_root}")
+    return max(candidates, key=lambda path: path.stat().st_mtime)
+
+
+def main() -> int:
+    args = parse_args()
+
+    checkpoint_path = Path(args.checkpoint) if args.checkpoint else find_latest_checkpoint(Path("runs"))
+    if not checkpoint_path.exists():
+        raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
+
+    config_path = (
+        Path(args.config)
+        if args.config is not None
+        else checkpoint_path.parent / "config.yaml"
+    )
+    config = load_config(config_path)
+
+    if args.manifest is not None:
+        config.setdefault("data", {})["manifest"] = args.manifest
+    if args.data_dir is not None:
+        config.setdefault("data", {})["samples_dir"] = args.data_dir
+    if args.device is not None:
+        config["device"] = args.device
+
+    dataset = FiberSequenceDataset(
+        manifest_path=config.get("data", {}).get("manifest"),
+        samples_dir=config.get("data", {}).get("samples_dir"),
+        df_list=config.get("data", {}).get("df_list") if config.get("data", {}).get("use_dataframe") else None,
+        stats_path=config.get("stats_path"),
+    )
+    if len(dataset) < 2:
+        raise SystemExit("Dataset must contain at least 2 samples.")
+    dataloader = DataLoader(
+        dataset,
+        batch_size=2,
+        shuffle=True,
+        collate_fn=fiber_sequence_collate,
+    )
+
+    device = resolve_device(config.get("device", "auto"), args.device)
+    model = build_model(config)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+    trainer = Trainer(model, optimizer, config, device)
+    trainer.load_checkpoint(checkpoint_path)
+    if args.global_step is not None:
+        trainer.global_step = int(args.global_step)
+
+    batch = next(iter(dataloader))
+    batch = trainer._move_batch(batch)
+    outputs = trainer._forward(batch)
+    loss_dict = trainer._step_loss(batch, outputs)
+
+    a_pred = outputs["a"].detach().cpu().numpy()
+    a1 = a_pred[0].reshape(-1)
+    a2 = a_pred[1].reshape(-1)
+    a_diff = float(np.max(np.abs(a1 - a2)))
+
+    w_ratio = None
+    if "w_points" in batch and outputs.get("w_pred_points") is not None:
+        w_pred = outputs["w_pred_points"].detach().cpu().numpy()
+        w_true = batch["w_points"].detach().cpu().numpy()
+        max_true = float(np.max(np.abs(w_true)))
+        max_pred = float(np.max(np.abs(w_pred)))
+        w_ratio = float(max_pred / max_true) if max_true > 0 else float("inf")
+
+    total_loss = float(loss_dict["loss"].item())
+    loss_kappa = float(loss_dict.get("loss_kappa", torch.tensor(0.0)).item())
+    loss_w = float(loss_dict.get("loss_w", torch.tensor(0.0)).item()) if "loss_w" in loss_dict else None
+    loss_hf = float(loss_dict.get("loss_hf", torch.tensor(0.0)).item())
+
+    ratios = {
+        "loss_kappa": loss_kappa / total_loss if total_loss > 0 else float("nan"),
+        "loss_hf": loss_hf / total_loss if total_loss > 0 else float("nan"),
+    }
+    if loss_w is not None:
+        ratios["loss_w"] = loss_w / total_loss if total_loss > 0 else float("nan")
+
+    lambda_kappa, lambda_hf = trainer._scheduled_lambdas()
+    report = {
+        "checkpoint": str(checkpoint_path),
+        "config": str(config_path),
+        "a_pred_sample1_first10": [float(v) for v in a1[:10]],
+        "a_pred_sample2_first10": [float(v) for v in a2[:10]],
+        "a_pred_max_abs_diff": a_diff,
+        "w_amplitude_ratio": w_ratio,
+        "loss_total": total_loss,
+        "loss_kappa": loss_kappa,
+        "loss_w": loss_w,
+        "loss_hf": loss_hf,
+        "loss_ratio": ratios,
+        "lambda_kappa": float(lambda_kappa),
+        "lambda_w": float(trainer.lambda_w),
+        "lambda_hf": float(lambda_hf),
+    }
+
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = output_dir / "verify_fix.json"
+    txt_path = output_dir / "verify_fix.txt"
+    with json_path.open("w", encoding="utf-8") as handle:
+        json.dump(report, handle, indent=2)
+
+    with txt_path.open("w", encoding="utf-8") as handle:
+        handle.write("Verify collapse fix report\n")
+        handle.write(f"checkpoint: {checkpoint_path}\n")
+        handle.write(f"a_pred sample1 first10: {report['a_pred_sample1_first10']}\n")
+        handle.write(f"a_pred sample2 first10: {report['a_pred_sample2_first10']}\n")
+        handle.write(f"a_pred max|diff|: {a_diff:.6f}\n")
+        handle.write(f"w amplitude ratio: {w_ratio}\n")
+        handle.write(f"loss total: {total_loss:.6f}\n")
+        handle.write(f"loss_kappa: {loss_kappa:.6f}\n")
+        handle.write(f"loss_w: {loss_w}\n")
+        handle.write(f"loss_hf: {loss_hf:.6f}\n")
+        handle.write(f"loss ratios: {ratios}\n")
+
+    logger.info("Saved diagnostics to %s and %s", json_path, txt_path)
+    logger.info("a_pred max|diff|: %.6f", a_diff)
+    logger.info("w amplitude ratio: %s", w_ratio)
+    logger.info("loss ratios: %s", ratios)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
