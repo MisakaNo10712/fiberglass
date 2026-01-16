@@ -9,6 +9,7 @@ data:
   use_dataframe: false
   coord_scale: 1.0
   kappa_meas_scale: 1.0
+  allow_placeholder_kappa: false
 
 stats_path: "project/data/processed2/stats.json"
 

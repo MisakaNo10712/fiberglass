@@ -26,6 +26,7 @@ from datasets import FiberSequenceDataset, fiber_sequence_collate
 from models import MambaCoeffNet
 from train import Trainer
 from utils import setup_logger
+from utils.kappa_audit import inspect_kappa_source
 
 logger = setup_logger("train")
 
@@ -148,6 +149,26 @@ def main() -> int:
         config.setdefault("data", {})["samples_dir"] = args.data_dir
     if args.device is not None:
         config["device"] = args.device
+
+    data_cfg = config.get("data", {})
+    allow_placeholder = bool(data_cfg.get("allow_placeholder_kappa", False))
+    loss_cfg = config.get("loss", {})
+    lambda_kappa = float(loss_cfg.get("lambda_kappa", 1.0))
+    if not data_cfg.get("use_dataframe"):
+        placeholder_info = inspect_kappa_source(
+            manifest_path=data_cfg.get("manifest"),
+            samples_dir=data_cfg.get("samples_dir"),
+        )
+        if placeholder_info.get("placeholder_kappa") and lambda_kappa > 0:
+            msg = (
+                "Placeholder kappa_t detected "
+                f"(reason={placeholder_info.get('placeholder_reason')}). "
+                "Set data.allow_placeholder_kappa=true to proceed or disable loss.lambda_kappa."
+            )
+            if allow_placeholder:
+                logger.warning(msg)
+            else:
+                raise RuntimeError(msg)
 
     seed = int(config.get("seed", 42))
     set_seed(seed)
