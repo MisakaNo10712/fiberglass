@@ -49,9 +49,9 @@ loss:
   # huber_delta is applied in normalized space (after / std).
   huber_delta: 1.0
   lambda_kappa: 1.0
-  lambda_hf: 0.0
+  lambda_hf: 1.0
   lambda_w: 1.0
-  lambda_bc: 0.0
+  lambda_bc: 1.0
   log_every_n: 100
 
 # Curriculum config (optional)
