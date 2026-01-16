@@ -18,7 +18,7 @@ from torch import Tensor
 
 from src.basis.dct2 import hf_weights, w_from_coeff
 from src.losses.losses import total_loss
-from src.operators.curvature_projection import kappa_t_from_coeff
+from src.operators.curvature_projection import kappa_t_from_coeff, solve_a_from_kappa_lstsq
 from src.train.metrics import compute_metrics
 from src.utils import setup_logger
 
@@ -50,12 +50,20 @@ class Trainer:
 
         train_cfg = config.get("train", {})
         self.grad_clip = train_cfg.get("grad_clip")
+        self.use_kappa_lstsq = bool(train_cfg.get("use_kappa_lstsq", True))
+        self.lstsq_ridge_lambda = float(train_cfg.get("lstsq_ridge_lambda", 1e-6))
+        self.lstsq_use_mask = bool(train_cfg.get("lstsq_use_mask", True))
 
         loss_cfg = config.get("loss", {})
         self.lambda_kappa = float(loss_cfg.get("lambda_kappa", 1.0))
         self.lambda_hf = float(loss_cfg.get("lambda_hf", 0.0))
         self.lambda_w = float(loss_cfg.get("lambda_w", 0.0))
         self.lambda_bc = float(loss_cfg.get("lambda_bc", 0.0))
+        self.lambda_delta_a = float(loss_cfg.get("lambda_delta_a", 0.0))
+        self.lambda_anchor = float(loss_cfg.get("lambda_anchor", 0.0))
+        self.anchor_mode = str(loss_cfg.get("anchor_mode", "none"))
+        self.anchor_index = int(loss_cfg.get("anchor_index", 0))
+        self.w_align_mode = str(loss_cfg.get("w_align_mode", "none"))
         self.huber_delta = float(loss_cfg.get("huber_delta", 1.0))
         self.loss_log_every_n = int(loss_cfg.get("log_every_n", 100))
 
@@ -93,18 +101,57 @@ class Trainer:
     def _forward(self, batch: dict[str, Tensor]) -> dict[str, Tensor]:
         X = batch["X"]
         mask = batch.get("mask")
-        a = self.model(X, mask)
-        if a.shape[-1] != self.M * self.N:
+        a_delta = self.model(X, mask)
+        if a_delta.shape[-1] != self.M * self.N:
             raise ValueError("Model output coeff size does not match basis M*N.")
-        a_reshaped = a.reshape(a.shape[0], self.M, self.N)
+        a_delta_reshaped = a_delta.reshape(a_delta.shape[0], self.M, self.N)
 
         x = batch.get("x", X[..., 0])
         y = batch.get("y", X[..., 1])
         tx = X[..., 2]
         ty = X[..., 3]
+        kappa_meas = batch.get("kappa_meas", X[..., 4])
 
-        kappa_pred = self._compute_kappa(a_reshaped, x, y, tx, ty)
+        a_ls = None
+        if self.use_kappa_lstsq:
+            with torch.no_grad():
+                a_ls = solve_a_from_kappa_lstsq(
+                    x,
+                    y,
+                    tx,
+                    ty,
+                    kappa_meas,
+                    self.M,
+                    self.N,
+                    self.Lx,
+                    self.Ly,
+                    ridge=self.lstsq_ridge_lambda,
+                    mask=mask if self.lstsq_use_mask else None,
+                )
+            if a_ls.ndim == 2:
+                a_ls = a_ls.unsqueeze(0)
+
+        if a_ls is None:
+            a_reshaped = a_delta_reshaped
+        else:
+            a_reshaped = a_ls + a_delta_reshaped
+        a = a_reshaped.reshape(a_reshaped.shape[0], -1)
+
+        kappa_pred_raw = self._compute_kappa(a_reshaped, x, y, tx, ty)
+        kappa_scale = None
+        if hasattr(self.model, "get_kappa_scale"):
+            kappa_scale = self.model.get_kappa_scale()
+        kappa_pred = kappa_pred_raw
         outputs = {"a": a, "a_reshaped": a_reshaped, "kappa_pred": kappa_pred}
+        if a_ls is not None:
+            outputs["a_ls"] = a_ls
+        outputs["a_delta"] = a_delta
+        outputs["a_delta_reshaped"] = a_delta_reshaped
+        if kappa_scale is not None:
+            kappa_pred = kappa_pred_raw * kappa_scale
+            outputs["kappa_pred"] = kappa_pred
+            outputs["kappa_pred_raw"] = kappa_pred_raw
+            outputs["kappa_scale"] = kappa_scale
 
         if "w_points" in batch or self.lambda_bc > 0:
             outputs["w_pred_points"] = self._compute_w(a_reshaped, x, y)
@@ -146,6 +193,8 @@ class Trainer:
             mask_w=mask,
             bc_pred=bc_pred,
             bc_mask=bc_mask,
+            w_align_x=batch.get("x", batch["X"][..., 0]),
+            w_align_y=batch.get("y", batch["X"][..., 1]),
             kappa_mean=kappa_mean,
             kappa_std=kappa_std,
             w_mean=w_mean,
@@ -154,6 +203,12 @@ class Trainer:
             lambda_hf=lambda_hf,
             lambda_w=self.lambda_w,
             lambda_bc=self.lambda_bc,
+            lambda_delta_a=self.lambda_delta_a,
+            a_delta=outputs.get("a_delta_reshaped"),
+            w_align_mode=self.w_align_mode,
+            anchor_mode=self.anchor_mode,
+            lambda_anchor=self.lambda_anchor,
+            anchor_index=self.anchor_index,
             huber_delta=self.huber_delta,
             step=self.global_step,
             log_every_n=self.loss_log_every_n,

@@ -40,6 +40,18 @@ def _masked_mean_pooling(hidden: Tensor, mask: Optional[Tensor]) -> Tensor:
     return masked_hidden.sum(dim=1) / denom
 
 
+def _masked_attention_pooling(hidden: Tensor, mask: Optional[Tensor], proj: nn.Linear) -> Tensor:
+    """Masked attention pooling with a learnable projection."""
+    scores = proj(hidden).squeeze(-1)
+    if mask is None:
+        mask_f = torch.ones_like(scores, dtype=hidden.dtype, device=hidden.device)
+    else:
+        mask_f = mask.to(device=hidden.device, dtype=hidden.dtype)
+    scores = scores.masked_fill(mask_f <= 0, -1e9)
+    weights = torch.softmax(scores, dim=1)
+    return (hidden * weights.unsqueeze(-1)).sum(dim=1)
+
+
 class ConvResidualBlock(nn.Module):
     """Lightweight residual 1D CNN block."""
 
@@ -83,6 +95,10 @@ class MambaCoeffNet(nn.Module):
         cnn_kernel_size: Kernel size for CNN fallback.
         cnn_dilation_base: Base dilation factor for CNN layers.
         mlp_hidden: Hidden dimension of the prediction head.
+        embedding_norm: Whether to apply LayerNorm after the input projection.
+        pooling: Pooling mode ("mean" or "attn").
+        kappa_scale_learnable: Whether to expose a learnable scalar for kappa loss scaling.
+        kappa_scale_init: Initial value for the kappa scale parameter.
     """
 
     def __init__(
@@ -97,6 +113,10 @@ class MambaCoeffNet(nn.Module):
         cnn_kernel_size: int = 5,
         cnn_dilation_base: int = 1,
         mlp_hidden: int = 256,
+        embedding_norm: bool = True,
+        pooling: str = "mean",
+        kappa_scale_learnable: bool = False,
+        kappa_scale_init: float = 1.0,
     ) -> None:
         super().__init__()
 
@@ -105,6 +125,10 @@ class MambaCoeffNet(nn.Module):
 
         self.encoder_type = encoder_type
         self._warned_cpu_fallback = False
+        self.pooling = pooling
+
+        if pooling not in {"mean", "attn"}:
+            raise ValueError(f"Unsupported pooling: {pooling}")
 
         want_mamba = encoder_type in {"auto", "mamba"} and _MAMBA_AVAILABLE
         if encoder_type == "mamba" and not _MAMBA_AVAILABLE:
@@ -113,11 +137,11 @@ class MambaCoeffNet(nn.Module):
 
         # Mask invalid tokens before embedding to mirror hard deletion; linear layer is bias-free
         # so zeroed tokens stay zero.
-        self.embedding = nn.Sequential(
-            nn.Linear(in_features, d_model, bias=False),
-            nn.LayerNorm(d_model),
-            nn.Dropout(dropout),
-        )
+        embedding_layers: list[nn.Module] = [nn.Linear(in_features, d_model, bias=False)]
+        if embedding_norm:
+            embedding_layers.append(nn.LayerNorm(d_model))
+        embedding_layers.append(nn.Dropout(dropout))
+        self.embedding = nn.Sequential(*embedding_layers)
 
         self.mamba_layers = (
             nn.ModuleList([Mamba(d_model=d_model) for _ in range(n_layers)]) if want_mamba else None
@@ -134,12 +158,25 @@ class MambaCoeffNet(nn.Module):
             ]
         )
 
+        self.pool_attn = nn.Linear(d_model, 1) if pooling == "attn" else None
+
         self.head = nn.Sequential(
             nn.Linear(d_model, mlp_hidden),
             nn.GELU(),
             nn.Dropout(dropout),
             nn.Linear(mlp_hidden, out_coeffs),
         )
+
+        self.kappa_scale_log = (
+            nn.Parameter(torch.log(torch.tensor(float(kappa_scale_init))))
+            if kappa_scale_learnable
+            else None
+        )
+
+    def get_kappa_scale(self) -> Tensor | None:
+        if self.kappa_scale_log is None:
+            return None
+        return self.kappa_scale_log.exp()
 
     def forward(self, X: Tensor, mask: Optional[Tensor] = None) -> Tensor:
         """
@@ -179,5 +216,8 @@ class MambaCoeffNet(nn.Module):
             for layer in self.cnn_layers:
                 hidden = layer(hidden)
 
-        pooled = _masked_mean_pooling(hidden, mask_f)
+        if self.pooling == "attn":
+            pooled = _masked_attention_pooling(hidden, mask_f, self.pool_attn)
+        else:
+            pooled = _masked_mean_pooling(hidden, mask_f)
         return self.head(pooled)

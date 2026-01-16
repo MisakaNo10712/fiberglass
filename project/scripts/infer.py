@@ -43,7 +43,7 @@ except Exception:
 
 from src.models import MambaCoeffNet
 from src.basis.dct2 import w_from_coeff
-from src.operators.curvature_projection import kappa_t_from_coeff
+from src.operators.curvature_projection import kappa_t_from_coeff, solve_a_from_kappa_lstsq
 from src.utils import setup_logger
 
 logger = setup_logger("infer")
@@ -547,8 +547,10 @@ def _load_checkpoint(path: Path, device: torch.device) -> tuple[dict[str, Any], 
 
 def _extract_model_cfg(ckpt_cfg: dict[str, Any] | None) -> dict[str, Any]:
     model_cfg = {}
+    loss_cfg = {}
     if isinstance(ckpt_cfg, dict):
         model_cfg = ckpt_cfg.get("model", ckpt_cfg.get("model_cfg", {})) or {}
+        loss_cfg = ckpt_cfg.get("loss", {}) or {}
     return {
         "d_model": int(model_cfg.get("d_model", 128)),
         "n_layers": int(model_cfg.get("n_layers", 4)),
@@ -557,6 +559,10 @@ def _extract_model_cfg(ckpt_cfg: dict[str, Any] | None) -> dict[str, Any]:
         "cnn_kernel_size": int(model_cfg.get("cnn_kernel_size", 5)),
         "cnn_dilation_base": int(model_cfg.get("cnn_dilation_base", 1)),
         "mlp_hidden": int(model_cfg.get("mlp_hidden", 256)),
+        "embedding_norm": bool(model_cfg.get("embedding_norm", True)),
+        "pooling": str(model_cfg.get("pooling", "mean")),
+        "kappa_scale_learnable": bool(loss_cfg.get("kappa_scale_learnable", False)),
+        "kappa_scale_init": float(loss_cfg.get("kappa_scale_init", 1.0)),
     }
 
 
@@ -675,6 +681,10 @@ def run_infer(args: argparse.Namespace) -> dict[str, Any]:
         cnn_kernel_size=model_cfg["cnn_kernel_size"],
         cnn_dilation_base=model_cfg["cnn_dilation_base"],
         mlp_hidden=model_cfg["mlp_hidden"],
+        embedding_norm=model_cfg["embedding_norm"],
+        pooling=model_cfg["pooling"],
+        kappa_scale_learnable=model_cfg["kappa_scale_learnable"],
+        kappa_scale_init=model_cfg["kappa_scale_init"],
     )
     incompatible = model.load_state_dict(state, strict=False)
     if incompatible.missing_keys or incompatible.unexpected_keys:
@@ -690,7 +700,36 @@ def run_infer(args: argparse.Namespace) -> dict[str, Any]:
     mask_tensor = torch.from_numpy(mask.astype(np.float32)).unsqueeze(0).to(device)
 
     with torch.no_grad():
-        a_vec = model(X_tensor, mask_tensor)
+        a_delta = model(X_tensor, mask_tensor)
+    a_vec = a_delta
+    use_kappa_lstsq = False
+    if isinstance(ckpt_cfg, dict):
+        use_kappa_lstsq = bool(ckpt_cfg.get("train", {}).get("use_kappa_lstsq", False))
+    if use_kappa_lstsq:
+        kappa_raw_t = torch.from_numpy(kappa_t.astype(np.float32)).unsqueeze(0).to(device)
+        x_t = torch.from_numpy(x.astype(np.float32)).unsqueeze(0).to(device)
+        y_t = torch.from_numpy(y.astype(np.float32)).unsqueeze(0).to(device)
+        tx_t = torch.from_numpy(tx.astype(np.float32)).unsqueeze(0).to(device)
+        ty_t = torch.from_numpy(ty.astype(np.float32)).unsqueeze(0).to(device)
+        ridge_lambda = 1e-6
+        if isinstance(ckpt_cfg, dict):
+            ridge_lambda = float(ckpt_cfg.get("train", {}).get("lstsq_ridge_lambda", ridge_lambda))
+        a_ls = solve_a_from_kappa_lstsq(
+            x_t,
+            y_t,
+            tx_t,
+            ty_t,
+            kappa_raw_t,
+            M,
+            N,
+            Lx,
+            Ly,
+            ridge=ridge_lambda,
+            mask=mask_tensor,
+        )
+        if a_ls.ndim == 2:
+            a_ls = a_ls.unsqueeze(0)
+        a_vec = a_ls.reshape(1, -1) + a_delta
     a = a_vec.reshape(1, M, N)
 
     xg = np.linspace(0.0, Lx, Nx, dtype=np.float32)
@@ -717,6 +756,10 @@ def run_infer(args: argparse.Namespace) -> dict[str, Any]:
 
     with torch.no_grad():
         kappa_pred_t = kappa_t_from_coeff(a, x_t, y_t, tx_t, ty_t, Lx=Lx, Ly=Ly)
+        if hasattr(model, "get_kappa_scale"):
+            kappa_scale = model.get_kappa_scale()
+            if kappa_scale is not None:
+                kappa_pred_t = kappa_pred_t * kappa_scale
     kappa_pred = kappa_pred_t.detach().cpu().numpy()
     if kappa_pred.ndim == 2:
         kappa_pred = kappa_pred[0]
@@ -821,6 +864,9 @@ def run_infer(args: argparse.Namespace) -> dict[str, Any]:
             "cnn_kernel_size": model_cfg["cnn_kernel_size"],
             "cnn_dilation_base": model_cfg["cnn_dilation_base"],
             "mlp_hidden": model_cfg["mlp_hidden"],
+            "embedding_norm": model_cfg["embedding_norm"],
+            "pooling": model_cfg["pooling"],
+            "kappa_scale_learnable": model_cfg["kappa_scale_learnable"],
             "out_coeffs": M * N,
         },
     }

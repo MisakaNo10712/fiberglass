@@ -6,6 +6,6 @@
 - 为了让欠定问题可解，我们用低维二维基函数展开，并需要可微算子支持 κ_pred = tᵀ H(w) t。
 """
 
-from .curvature_projection import kappa_t_from_coeff
+from .curvature_projection import kappa_t_from_coeff, solve_a_from_kappa_lstsq
 
-__all__ = ["kappa_t_from_coeff"]
+__all__ = ["kappa_t_from_coeff", "solve_a_from_kappa_lstsq"]

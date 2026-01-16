@@ -88,6 +88,7 @@ def resolve_device(config_device: Any, override: str | None) -> torch.device:
 def build_model(config: dict[str, Any]) -> MambaCoeffNet:
     model_cfg = config.get("model", {})
     basis_cfg = config.get("basis", {})
+    loss_cfg = config.get("loss", {})
     out_coeffs = int(model_cfg.get("out_coeffs", basis_cfg.get("M") * basis_cfg.get("N")))
     model_cfg["out_coeffs"] = out_coeffs
     return MambaCoeffNet(
@@ -97,6 +98,10 @@ def build_model(config: dict[str, Any]) -> MambaCoeffNet:
         dropout=float(model_cfg.get("dropout", 0.0)),
         out_coeffs=out_coeffs,
         encoder_type=str(model_cfg.get("encoder_type", "auto")),
+        embedding_norm=bool(model_cfg.get("embedding_norm", True)),
+        pooling=str(model_cfg.get("pooling", "mean")),
+        kappa_scale_learnable=bool(loss_cfg.get("kappa_scale_learnable", False)),
+        kappa_scale_init=float(loss_cfg.get("kappa_scale_init", 1.0)),
     )
 
 

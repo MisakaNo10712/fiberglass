@@ -8,7 +8,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import math
 import sys
 from pathlib import Path
 from typing import Any
@@ -163,6 +162,7 @@ def resolve_device(config_device: Any, override: str | None) -> torch.device:
 def build_model(config: dict[str, Any]) -> MambaCoeffNet:
     model_cfg = config.get("model", {})
     basis_cfg = config.get("basis", {})
+    loss_cfg = config.get("loss", {})
     out_coeffs = int(model_cfg.get("out_coeffs", basis_cfg.get("M") * basis_cfg.get("N")))
     model_cfg["out_coeffs"] = out_coeffs
     return MambaCoeffNet(
@@ -172,6 +172,10 @@ def build_model(config: dict[str, Any]) -> MambaCoeffNet:
         dropout=float(model_cfg.get("dropout", 0.0)),
         out_coeffs=out_coeffs,
         encoder_type=str(model_cfg.get("encoder_type", "auto")),
+        embedding_norm=bool(model_cfg.get("embedding_norm", True)),
+        pooling=str(model_cfg.get("pooling", "mean")),
+        kappa_scale_learnable=bool(loss_cfg.get("kappa_scale_learnable", False)),
+        kappa_scale_init=float(loss_cfg.get("kappa_scale_init", 1.0)),
     )
 
 
@@ -241,6 +245,14 @@ def _error_stats(diff: np.ndarray) -> dict[str, float]:
         "mae": float(np.mean(np.abs(vals))),
         "max_abs": float(np.max(np.abs(vals))),
     }
+
+
+def _fit_scale_bias(x: np.ndarray, y: np.ndarray) -> tuple[float, float]:
+    if x.size < 2 or y.size < 2:
+        return float("nan"), float("nan")
+    A = np.column_stack([x, np.ones_like(x)])
+    coeffs, _, _, _ = np.linalg.lstsq(A, y, rcond=None)
+    return float(coeffs[0]), float(coeffs[1])
 
 
 def _value_stats(values: np.ndarray) -> dict[str, float]:
@@ -499,7 +511,6 @@ def _eval_predictions(
     w_rmse = float("nan")
     w_pred_stats = _value_stats(_masked_values(w_pred, mask))
     if w_true is not None:
-        w_true_vals = _masked_values(w_true, mask)
         w_rmse = _error_stats(_masked_values(w_pred - w_true, mask))["rmse"]
 
     aligned_plane_rmse = float("nan")
@@ -610,6 +621,13 @@ def _assign_case_label(
             cond_w_large = w_plane_k >= tol_large_w
         else:
             cond_w_large = np.isfinite(w_rmse_k) and np.isfinite(tol_large_w) and w_rmse_k >= tol_large_w
+        if (
+            np.isfinite(w_rmse_k)
+            and np.isfinite(w_rmse_w)
+            and w_rmse_w > 0
+            and (w_rmse_k / w_rmse_w) >= ratio_w_rmse
+        ):
+            cond_w_large = True
 
         if cond_kappa_small and cond_w_large:
             reasons.append("kappa fit is good but w remains large even after plane align")
@@ -785,6 +803,15 @@ def _report_hints(stats: dict[str, Any]) -> list[str]:
     if np.isfinite(kappa_corr) and kappa_corr <= -0.9:
         hints.append("符号/上下表面顺序可能反")
 
+    kappa_consistency = stats.get("kappa_consistency")
+    if isinstance(kappa_consistency, dict):
+        corr = float(kappa_consistency.get("corr", float("nan")))
+        fit_s = float(kappa_consistency.get("fit_s", float("nan")))
+        if (np.isfinite(corr) and corr < 0.2) or (
+            np.isfinite(fit_s) and (abs(fit_s) >= 10.0 or abs(fit_s) <= 0.1)
+        ):
+            hints.append("kappa_meas 与 w_true 物理不一致（corr低或尺度偏差大）")
+
     w_block = stats.get("w")
     if isinstance(w_block, dict):
         raw_rmse = float(w_block.get("raw", {}).get("rmse", float("nan")))
@@ -902,6 +929,16 @@ def _aggregate_summary(stats_list: list[dict[str, Any]]) -> dict[str, Any]:
         "kappa_max_abs": _summary_stats(collect("kappa", "max_abs")),
         "kappa_scale_ratio_std": _summary_stats(collect("kappa", "scale_ratio_std")),
         "kappa_scale_ratio_max": _summary_stats(collect("kappa", "scale_ratio_max")),
+        "kappa_consistency_corr": _summary_stats(collect("kappa_consistency", "corr")),
+        "kappa_consistency_rmse": _summary_stats(collect("kappa_consistency", "rmse")),
+        "kappa_consistency_scale_ratio_std": _summary_stats(
+            collect("kappa_consistency", "scale_ratio_std")
+        ),
+        "kappa_consistency_scale_ratio_max": _summary_stats(
+            collect("kappa_consistency", "scale_ratio_max")
+        ),
+        "kappa_consistency_fit_s": _summary_stats(collect("kappa_consistency", "fit_s")),
+        "kappa_consistency_fit_b": _summary_stats(collect("kappa_consistency", "fit_b")),
         "w_raw_rmse": _summary_stats(collect("w", "raw", "rmse")),
         "w_raw_mae": _summary_stats(collect("w", "raw", "mae")),
         "w_raw_max_abs": _summary_stats(collect("w", "raw", "max_abs")),
@@ -923,6 +960,17 @@ def _aggregate_summary(stats_list: list[dict[str, Any]]) -> dict[str, Any]:
         "baseline_lstsq_kappa_pred_std": _summary_stats(
             collect("baseline_lstsq", "kappa_pred_std")
         ),
+        "baseline_w_only_w_rmse": _summary_stats(collect("baseline_w_only", "w_rmse")),
+        "baseline_w_only_kappa_rmse": _summary_stats(collect("baseline_w_only", "kappa_rmse")),
+        "baseline_kappa_only_kappa_rmse": _summary_stats(
+            collect("baseline_kappa_only", "kappa_rmse")
+        ),
+        "baseline_kappa_only_w_rmse": _summary_stats(collect("baseline_kappa_only", "w_rmse")),
+        "baseline_both_w_rmse": _summary_stats(collect("baseline_both", "w_rmse")),
+        "baseline_both_kappa_rmse": _summary_stats(collect("baseline_both", "kappa_rmse")),
+        "model_w_rmse": _summary_stats(collect("model_metrics", "w_rmse")),
+        "model_kappa_rmse": _summary_stats(collect("model_metrics", "kappa_rmse")),
+        "case_score": _summary_stats(collect("case_score")),
         "sensitivity_a_diff": _summary_stats(collect("sensitivity", "a_diff_max")),
         "sensitivity_w_diff": _summary_stats(collect("sensitivity", "w_diff_max")),
         "sensitivity_kappa_diff": _summary_stats(collect("sensitivity", "kappa_diff_max")),
@@ -953,6 +1001,12 @@ def _write_summary_csv(path: Path, stats_list: list[dict[str, Any]]) -> None:
         "kappa_rmse",
         "kappa_scale_ratio_std",
         "kappa_scale_ratio_max",
+        "kappa_consistency_corr",
+        "kappa_consistency_rmse",
+        "kappa_consistency_scale_ratio_std",
+        "kappa_consistency_scale_ratio_max",
+        "kappa_consistency_fit_s",
+        "kappa_consistency_fit_b",
         "w_raw_rmse",
         "w_aligned_mean_rmse",
         "w_aligned_plane_rmse",
@@ -1011,6 +1065,16 @@ def _write_summary_csv(path: Path, stats_list: list[dict[str, Any]]) -> None:
                 "kappa_rmse": _safe_get(stats, "kappa", "rmse"),
                 "kappa_scale_ratio_std": _safe_get(stats, "kappa", "scale_ratio_std"),
                 "kappa_scale_ratio_max": _safe_get(stats, "kappa", "scale_ratio_max"),
+                "kappa_consistency_corr": _safe_get(stats, "kappa_consistency", "corr"),
+                "kappa_consistency_rmse": _safe_get(stats, "kappa_consistency", "rmse"),
+                "kappa_consistency_scale_ratio_std": _safe_get(
+                    stats, "kappa_consistency", "scale_ratio_std"
+                ),
+                "kappa_consistency_scale_ratio_max": _safe_get(
+                    stats, "kappa_consistency", "scale_ratio_max"
+                ),
+                "kappa_consistency_fit_s": _safe_get(stats, "kappa_consistency", "fit_s"),
+                "kappa_consistency_fit_b": _safe_get(stats, "kappa_consistency", "fit_b"),
                 "w_raw_rmse": raw_rmse,
                 "w_aligned_mean_rmse": _safe_get(stats, "w", "aligned_mean", "rmse"),
                 "w_aligned_plane_rmse": plane_rmse,
@@ -1054,7 +1118,15 @@ def _run_sensitivity(
     def _forward_scaled(scale: float) -> tuple[dict[str, torch.Tensor], torch.Tensor]:
         mod_batch = dict(batch)
         X_mod = batch["X"].clone()
-        X_mod[..., 4] = X_mod[..., 4] * scale
+        if "kappa_meas" in batch and "kappa_mean" in batch and "kappa_std" in batch:
+            kappa_raw = batch["kappa_meas"] * scale
+            kappa_mean = batch["kappa_mean"]
+            kappa_std = batch["kappa_std"]
+            kappa_in = (kappa_raw - kappa_mean) / (kappa_std + 1e-12)
+            X_mod[..., 4] = kappa_in
+            mod_batch["kappa_meas"] = kappa_raw
+        else:
+            X_mod[..., 4] = X_mod[..., 4] * scale
         mod_batch["X"] = X_mod
         with torch.no_grad():
             mod_outputs = trainer._forward(mod_batch)
@@ -1148,6 +1220,15 @@ def _diagnose_sample(
     scale_ratio_std = kappa_pred_stats["std"] / (kappa_meas_stats["std"] + ratio_eps)
     scale_ratio_max = kappa_pred_stats["abs_max"] / (kappa_meas_stats["abs_max"] + ratio_eps)
     w_pred_stats = _value_stats(_masked_values(w_pred_np, mask_np))
+    model_metrics = _eval_predictions(
+        w_pred=w_pred_np,
+        kappa_pred=kappa_pred_np,
+        w_true=w_true_np,
+        kappa_meas=kappa_meas_np,
+        mask=mask_np,
+        x=x_np,
+        y=y_np,
+    )
 
     stats: dict[str, Any] = {
         "checkpoint": str(trainer.config.get("checkpoint", "")),
@@ -1161,6 +1242,7 @@ def _diagnose_sample(
         "a_pred_norm": a_pred_norm,
         "w_pred_std": w_pred_stats["std"],
         "kappa_pred_std": kappa_pred_stats["std"],
+        "model_metrics": model_metrics,
         "kappa": {
             "corr": kappa_corr,
             "corr_abs": kappa_corr_abs,
@@ -1200,6 +1282,72 @@ def _diagnose_sample(
             "w_true_stats": w_true_stats,
             "w_pred_stats": w_pred_stats,
         }
+
+        kappa_consistency = None
+        try:
+            x0 = x[0].detach().cpu().to(torch.float64)
+            y0 = y[0].detach().cpu().to(torch.float64)
+            tx0 = tx[0].detach().cpu().to(torch.float64)
+            ty0 = ty[0].detach().cpu().to(torch.float64)
+            mask0 = mask[0].detach().cpu() if mask is not None else None
+            w_true0 = w_true_points[0].detach().cpu().to(torch.float64)
+
+            M, N = outputs["a_reshaped"][0].shape
+            Phi_full = _build_design_matrix_w(
+                x0, y0, M, N, Lx=trainer.Lx, Ly=trainer.Ly, dtype=torch.float64
+            )
+            num_points = int(x0.numel())
+            if mask0 is None:
+                mask_vec = torch.ones(num_points, dtype=torch.bool)
+            else:
+                mask_vec = mask0.reshape(-1) > 0
+            w_vec = w_true0.reshape(-1)
+            finite_w = torch.isfinite(w_vec)
+            mask_w = mask_vec & finite_w
+            if mask_w.any():
+                Phi_w = Phi_full[mask_w]
+                b_w = w_vec[mask_w]
+                result_w = _solve_lstsq_system(
+                    Phi_w,
+                    b_w,
+                    ridge_lambda=case_params["lstsq_ridge_lambda"],
+                    label="w_consistency",
+                )
+                if result_w.get("success"):
+                    a_w_cons = result_w["solution"].reshape(M, N)
+                    kappa_true = kappa_t_from_coeff(
+                        a_w_cons, x0, y0, tx0, ty0, Lx=trainer.Lx, Ly=trainer.Ly
+                    )
+                    kappa_true_np = kappa_true.detach().cpu().numpy()
+                    kappa_true_vals, kappa_meas_vals2 = _masked_pair(
+                        kappa_true_np, kappa_meas_np, mask_np
+                    )
+                    kappa_corr_cons = _pearson_corr(kappa_true_vals, kappa_meas_vals2)
+                    kappa_rmse_cons = _error_stats(kappa_true_vals - kappa_meas_vals2)["rmse"]
+                    kappa_true_stats = _value_stats(kappa_true_vals)
+                    kappa_meas_stats2 = _value_stats(kappa_meas_vals2)
+                    ratio_eps = 1e-12
+                    scale_ratio_std = kappa_meas_stats2["std"] / (
+                        kappa_true_stats["std"] + ratio_eps
+                    )
+                    scale_ratio_max = kappa_meas_stats2["abs_max"] / (
+                        kappa_true_stats["abs_max"] + ratio_eps
+                    )
+                    fit_s, fit_b = _fit_scale_bias(kappa_true_vals, kappa_meas_vals2)
+                    kappa_consistency = {
+                        "corr": kappa_corr_cons,
+                        "rmse": kappa_rmse_cons,
+                        "scale_ratio_std": scale_ratio_std,
+                        "scale_ratio_max": scale_ratio_max,
+                        "fit_s": fit_s,
+                        "fit_b": fit_b,
+                        "num_valid": int(kappa_true_vals.size),
+                    }
+        except Exception as exc:
+            logger.warning("kappa consistency check failed: %s", exc)
+
+        if kappa_consistency is not None:
+            stats["kappa_consistency"] = kappa_consistency
 
         if make_plots and grid:
             grid_mask = np.isfinite(x_np) & np.isfinite(y_np)
@@ -1290,27 +1438,215 @@ def _diagnose_sample(
             w_pred_points=w_pred_points,
         )
 
+    baseline_w_only = None
+    baseline_kappa_only = None
+    baseline_both = None
+    a_w = None
+    a_k = None
+    a_b = None
     if do_baseline_lstsq:
-        x0 = x[0]
-        y0 = y[0]
-        tx0 = tx[0]
-        ty0 = ty[0]
-        mask0 = mask[0] if mask is not None else None
-        w_true0 = w_true_points[0] if w_true_points is not None else None
-        baseline_lstsq_stats = _baseline_lstsq(
-            a_shape=tuple(outputs["a_reshaped"][0].shape),
-            x=x0,
-            y=y0,
-            tx=tx0,
-            ty=ty0,
-            mask=mask0,
-            w_true=w_true0,
-            kappa_meas=kappa_meas[0],
-            Lx=trainer.Lx,
-            Ly=trainer.Ly,
-            target=baseline_target,
+        x0 = x[0].detach().cpu().to(torch.float64)
+        y0 = y[0].detach().cpu().to(torch.float64)
+        tx0 = tx[0].detach().cpu().to(torch.float64)
+        ty0 = ty[0].detach().cpu().to(torch.float64)
+        mask0 = mask[0].detach().cpu() if mask is not None else None
+        kappa0 = kappa_meas[0].detach().cpu().to(torch.float64)
+        w_true0 = w_true_points[0].detach().cpu().to(torch.float64) if w_true_points is not None else None
+
+        M, N = outputs["a_reshaped"][0].shape
+        Phi_full = _build_design_matrix_w(
+            x0, y0, M, N, Lx=trainer.Lx, Ly=trainer.Ly, dtype=torch.float64
         )
-        stats["baseline_lstsq"] = baseline_lstsq_stats
+        K_full = _build_design_matrix_kappa(
+            x0, y0, tx0, ty0, M, N, Lx=trainer.Lx, Ly=trainer.Ly, dtype=torch.float64
+        )
+
+        num_points = int(x0.numel())
+        if mask0 is None:
+            mask_vec = torch.ones(num_points, dtype=torch.bool)
+        else:
+            mask_vec = mask0.reshape(-1) > 0
+
+        kappa_vec = kappa0.reshape(-1)
+        finite_kappa = torch.isfinite(kappa_vec)
+        if w_true0 is not None:
+            w_vec = w_true0.reshape(-1)
+            finite_w = torch.isfinite(w_vec)
+        else:
+            w_vec = None
+            finite_w = None
+
+        mask_k = mask_vec & finite_kappa
+        mask_w = mask_vec & finite_w if w_vec is not None else None
+        mask_b = mask_vec & finite_kappa & finite_w if w_vec is not None else None
+
+        if baseline_target in ("w", "both") and w_vec is None:
+            logger.warning("LS-w skipped because w_true is missing.")
+        if baseline_target == "both" and w_vec is None:
+            logger.warning("LS-both skipped because w_true is missing.")
+
+        if baseline_target in ("w", "both") and w_vec is not None:
+            Phi_w = Phi_full[mask_w]
+            b_w = w_vec[mask_w]
+            result_w = _solve_lstsq_system(
+                Phi_w,
+                b_w,
+                ridge_lambda=case_params["lstsq_ridge_lambda"],
+                label="w",
+            )
+            if result_w.get("success"):
+                a_w = result_w["solution"].reshape(M, N)
+                w_pred_w = w_from_coeff(a_w, x0, y0, Lx=trainer.Lx, Ly=trainer.Ly)
+                kappa_pred_w = kappa_t_from_coeff(
+                    a_w, x0, y0, tx0, ty0, Lx=trainer.Lx, Ly=trainer.Ly
+                )
+                metrics_w = _eval_predictions(
+                    w_pred=w_pred_w.detach().cpu().numpy(),
+                    kappa_pred=kappa_pred_w.detach().cpu().numpy(),
+                    w_true=w_true_np,
+                    kappa_meas=kappa_meas_np,
+                    mask=mask_np,
+                    x=x_np,
+                    y=y_np,
+                )
+                meta_w = {k: v for k, v in result_w.items() if k != "solution"}
+                baseline_w_only = {"target": "w", **meta_w, **metrics_w}
+
+        if baseline_target in ("kappa", "both"):
+            K_k = K_full[mask_k]
+            b_k = kappa_vec[mask_k]
+            result_k = _solve_lstsq_system(
+                K_k,
+                b_k,
+                ridge_lambda=case_params["lstsq_ridge_lambda"],
+                label="kappa",
+            )
+            if result_k.get("success"):
+                a_k = result_k["solution"].reshape(M, N)
+                w_pred_k = w_from_coeff(a_k, x0, y0, Lx=trainer.Lx, Ly=trainer.Ly)
+                kappa_pred_k = kappa_t_from_coeff(
+                    a_k, x0, y0, tx0, ty0, Lx=trainer.Lx, Ly=trainer.Ly
+                )
+                metrics_k = _eval_predictions(
+                    w_pred=w_pred_k.detach().cpu().numpy(),
+                    kappa_pred=kappa_pred_k.detach().cpu().numpy(),
+                    w_true=w_true_np,
+                    kappa_meas=kappa_meas_np,
+                    mask=mask_np,
+                    x=x_np,
+                    y=y_np,
+                    compute_aligned_plane=True,
+                )
+                meta_k = {k: v for k, v in result_k.items() if k != "solution"}
+                baseline_kappa_only = {"target": "kappa", **meta_k, **metrics_k}
+
+        if baseline_target == "both" and w_vec is not None:
+            Phi_b = Phi_full[mask_b]
+            K_b = K_full[mask_b]
+            b_w = w_vec[mask_b]
+            b_k = kappa_vec[mask_b]
+            A_b = torch.cat([Phi_b, K_b], dim=0)
+            b_b = torch.cat([b_w, b_k], dim=0)
+            result_b = _solve_lstsq_system(
+                A_b,
+                b_b,
+                ridge_lambda=case_params["lstsq_ridge_lambda"],
+                label="both",
+            )
+            if result_b.get("success"):
+                a_b = result_b["solution"].reshape(M, N)
+                w_pred_b = w_from_coeff(a_b, x0, y0, Lx=trainer.Lx, Ly=trainer.Ly)
+                kappa_pred_b = kappa_t_from_coeff(
+                    a_b, x0, y0, tx0, ty0, Lx=trainer.Lx, Ly=trainer.Ly
+                )
+                metrics_b = _eval_predictions(
+                    w_pred=w_pred_b.detach().cpu().numpy(),
+                    kappa_pred=kappa_pred_b.detach().cpu().numpy(),
+                    w_true=w_true_np,
+                    kappa_meas=kappa_meas_np,
+                    mask=mask_np,
+                    x=x_np,
+                    y=y_np,
+                )
+                meta_b = {k: v for k, v in result_b.items() if k != "solution"}
+                baseline_both = {"target": "both", **meta_b, **metrics_b}
+
+        if baseline_w_only is not None:
+            stats["baseline_w_only"] = baseline_w_only
+        if baseline_kappa_only is not None:
+            stats["baseline_kappa_only"] = baseline_kappa_only
+        if baseline_both is not None:
+            stats["baseline_both"] = baseline_both
+            stats["baseline_lstsq"] = baseline_both
+
+    a_m = outputs["a_reshaped"][0].detach().cpu().to(torch.float64)
+    coeff_norms = {
+        "a_w": _coeff_norm(a_w),
+        "a_k": _coeff_norm(a_k),
+        "a_b": _coeff_norm(a_b),
+        "a_m": _coeff_norm(a_m),
+    }
+    coeff_diffs = {
+        "m_minus_w": _coeff_diff(a_m, a_w),
+        "m_minus_k": _coeff_diff(a_m, a_k),
+        "m_minus_b": _coeff_diff(a_m, a_b),
+        "w_minus_k": _coeff_diff(a_w, a_k),
+        "w_minus_b": _coeff_diff(a_w, a_b),
+        "k_minus_b": _coeff_diff(a_k, a_b),
+    }
+    stats["coeff_norms"] = coeff_norms
+    stats["coeff_diffs"] = coeff_diffs
+
+    w_true_std = stats.get("w_true_std", float("nan"))
+    kappa_abs_med = float("nan")
+    if kappa_meas_vals.size > 0:
+        kappa_abs_med = float(np.median(np.abs(kappa_meas_vals)))
+    kappa_scale = kappa_abs_med
+    if not np.isfinite(kappa_scale) or kappa_scale <= 0:
+        kappa_scale = float(kappa_meas_stats.get("std", float("nan")))
+    if not np.isfinite(kappa_scale) or kappa_scale <= 0:
+        kappa_scale = float(kappa_meas_stats.get("abs_max", float("nan")))
+
+    tol_small_w = (
+        case_params["case_tol_small_w_rmse"] * w_true_std if np.isfinite(w_true_std) else float("nan")
+    )
+    tol_large_w = (
+        case_params["case_tol_large_w_rmse"] * w_true_std if np.isfinite(w_true_std) else float("nan")
+    )
+    tol_high_kappa = (
+        case_params["case_tol_high_kappa_rmse"] * kappa_scale
+        if np.isfinite(kappa_scale)
+        else float("nan")
+    )
+    stats["case_thresholds"] = {
+        "tol_small_w_rmse": tol_small_w,
+        "tol_large_w_rmse": tol_large_w,
+        "tol_high_kappa_rmse": tol_high_kappa,
+        "tol_low_corr_kappa": case_params["case_tol_low_corr_kappa"],
+        "ratio_kappa_rmse": case_params["case_ratio_kappa_rmse"],
+        "ratio_w_rmse": case_params["case_ratio_w_rmse"],
+        "ratio_model_w_rmse": case_params["case_ratio_model_w_rmse"],
+        "ratio_model_kappa_rmse": case_params["case_ratio_model_kappa_rmse"],
+    }
+
+    case_label, case_reasons, case_score = _assign_case_label(
+        w_true_available=bool(w_true_np is not None),
+        ls_w=baseline_w_only,
+        ls_k=baseline_kappa_only,
+        ls_b=baseline_both,
+        model_metrics=model_metrics,
+        tol_small_w=tol_small_w,
+        tol_large_w=tol_large_w,
+        tol_high_kappa=tol_high_kappa,
+        tol_low_corr=case_params["case_tol_low_corr_kappa"],
+        ratio_kappa_rmse=case_params["case_ratio_kappa_rmse"],
+        ratio_w_rmse=case_params["case_ratio_w_rmse"],
+        ratio_model_w_rmse=case_params["case_ratio_model_w_rmse"],
+        ratio_model_kappa_rmse=case_params["case_ratio_model_kappa_rmse"],
+    )
+    stats["case_label"] = case_label
+    stats["case_reasons"] = case_reasons
+    stats["case_score"] = case_score
 
     if make_plots:
         _plot_kappa_scatter(kappa_meas_vals, kappa_pred_vals, sample_dir / "kappa_scatter.png")
@@ -1595,6 +1931,18 @@ def main() -> int:
     out_dir = Path(args.out_dir) if args.out_dir is not None else Path("diagnostic_reports") / run_name
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    case_params = {
+        "case_tol_small_w_rmse": float(args.case_tol_small_w_rmse),
+        "case_tol_large_w_rmse": float(args.case_tol_large_w_rmse),
+        "case_tol_high_kappa_rmse": float(args.case_tol_high_kappa_rmse),
+        "case_tol_low_corr_kappa": float(args.case_tol_low_corr_kappa),
+        "case_ratio_kappa_rmse": float(args.case_ratio_kappa_rmse),
+        "case_ratio_w_rmse": float(args.case_ratio_w_rmse),
+        "case_ratio_model_w_rmse": float(args.case_ratio_model_w_rmse),
+        "case_ratio_model_kappa_rmse": float(args.case_ratio_model_kappa_rmse),
+        "lstsq_ridge_lambda": float(args.lstsq_ridge_lambda),
+    }
+
     summary: list[dict[str, Any]] = []
     for split_pos in sample_positions:
         dataset_idx = int(split_indices[split_pos])
@@ -1613,6 +1961,7 @@ def main() -> int:
             do_baseline_opt=args.do_baseline_opt,
             baseline_target=args.baseline_target,
             do_sensitivity=args.do_sensitivity,
+            case_params=case_params,
         )
         summary.append(stats)
 
@@ -1690,6 +2039,37 @@ def main() -> int:
             hints = ["无明显结论（阈值未触发）"]
         hint_msg = "；".join(hints)
         print(f"[sample_id={sample_id} dataset_idx={dataset_idx}] {hint_msg}")
+
+    case_buckets: dict[str, list[dict[str, Any]]] = {}
+    for stats in summary:
+        label = stats.get("case_label") or "CASE_UNKNOWN"
+        case_buckets.setdefault(str(label), []).append(stats)
+
+    print("Case counts:")
+    for label in sorted(case_buckets.keys()):
+        print(f"  {label}: {len(case_buckets[label])}")
+
+    print("Top-5 samples per case:")
+    for label in sorted(case_buckets.keys()):
+        items = case_buckets[label]
+        if not items:
+            continue
+
+        def _score(item: dict[str, Any]) -> float:
+            val = item.get("case_score")
+            try:
+                val_f = float(val)
+            except (TypeError, ValueError):
+                return float("-inf")
+            return val_f if np.isfinite(val_f) else float("-inf")
+
+        top_items = sorted(items, key=_score, reverse=True)[:5]
+        print(f"  {label}:")
+        for item in top_items:
+            sid = item.get("sample_id")
+            did = item.get("dataset_index")
+            score = item.get("case_score")
+            print(f"    sample_id={sid} dataset_idx={did} score={score}")
 
     return 0
 

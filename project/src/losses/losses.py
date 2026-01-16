@@ -56,6 +56,93 @@ def optional_bc_loss(w_pred_on_boundary: Tensor, mask_boundary: Optional[Tensor]
     return loss.sum() / denom
 
 
+def _masked_mean(values: Tensor, mask: Optional[Tensor]) -> Tensor:
+    if mask is None:
+        return values.mean(dim=-1)
+    mask_f = mask.to(device=values.device, dtype=values.dtype)
+    denom = mask_f.sum(dim=-1).clamp_min(1.0)
+    return (values * mask_f).sum(dim=-1) / denom
+
+
+def _align_mean(
+    w_pred: Tensor, w_true: Tensor, mask: Optional[Tensor]
+) -> tuple[Tensor, Tensor]:
+    diff = w_true - w_pred
+    diff_flat = diff.reshape(diff.shape[0], -1)
+    mask_flat = mask.reshape(mask.shape[0], -1) if mask is not None else None
+    offset = _masked_mean(diff_flat, mask_flat)
+    view_shape = (diff.shape[0],) + (1,) * (w_pred.ndim - 1)
+    w_aligned = w_pred + offset.view(view_shape)
+    return w_aligned, offset
+
+
+def _align_plane(
+    x: Tensor,
+    y: Tensor,
+    w_pred: Tensor,
+    w_true: Tensor,
+    mask: Optional[Tensor],
+) -> tuple[Tensor, Tensor]:
+    if x is None or y is None:
+        return w_pred, torch.full((w_pred.shape[0], 3), float("nan"), device=w_pred.device)
+    x_flat = x.reshape(x.shape[0], -1)
+    y_flat = y.reshape(y.shape[0], -1)
+    diff = (w_true - w_pred).reshape(w_pred.shape[0], -1)
+    mask_flat = mask.reshape(mask.shape[0], -1) if mask is not None else None
+
+    coeffs = []
+    aligned_list = []
+    for idx in range(diff.shape[0]):
+        xi = x_flat[idx]
+        yi = y_flat[idx]
+        di = diff[idx]
+        valid = torch.isfinite(xi) & torch.isfinite(yi) & torch.isfinite(di)
+        if mask_flat is not None:
+            valid = valid & (mask_flat[idx] > 0)
+        if valid.sum() < 3:
+            coeffs.append(
+                torch.tensor([float("nan"), float("nan"), float("nan")], device=w_pred.device)
+            )
+            aligned_list.append(w_pred[idx].reshape(-1))
+            continue
+        A = torch.stack([xi[valid], yi[valid], torch.ones_like(xi[valid])], dim=1)
+        sol = torch.linalg.lstsq(A, di[valid]).solution
+        plane = sol[0] * xi + sol[1] * yi + sol[2]
+        aligned_list.append(w_pred[idx].reshape(-1) + plane)
+        coeffs.append(sol)
+
+    aligned = torch.stack(aligned_list, dim=0).reshape(w_pred.shape)
+    coeffs_t = torch.stack(coeffs, dim=0)
+    return aligned, coeffs_t
+
+
+def _select_anchor(
+    values: Tensor, mask: Optional[Tensor], anchor_index: int
+) -> tuple[Tensor, Tensor]:
+    values_flat = values.reshape(values.shape[0], -1)
+    mask_flat = mask.reshape(mask.shape[0], -1) if mask is not None else None
+    anchors = []
+    valid_flags = []
+    for idx in range(values_flat.shape[0]):
+        if mask_flat is None:
+            pos = min(max(anchor_index, 0), values_flat.shape[1] - 1)
+            anchors.append(values_flat[idx, pos])
+            valid_flags.append(True)
+            continue
+        valid_idx = torch.nonzero(mask_flat[idx] > 0, as_tuple=False).reshape(-1)
+        if valid_idx.numel() == 0:
+            anchors.append(torch.tensor(float("nan"), device=values.device, dtype=values.dtype))
+            valid_flags.append(False)
+            continue
+        if 0 <= anchor_index < int(valid_idx.numel()):
+            pos = valid_idx[int(anchor_index)]
+        else:
+            pos = valid_idx[0]
+        anchors.append(values_flat[idx, pos])
+        valid_flags.append(True)
+    return torch.stack(anchors, dim=0), torch.tensor(valid_flags, device=values.device)
+
+
 def _as_scalar_tensor(value: float | Tensor, ref: Tensor) -> Tensor:
     if isinstance(value, Tensor):
         return value.to(device=ref.device, dtype=ref.dtype)
@@ -83,6 +170,8 @@ def total_loss(
     mask_w: Optional[Tensor] = None,
     bc_pred: Optional[Tensor] = None,
     bc_mask: Optional[Tensor] = None,
+    w_align_x: Optional[Tensor] = None,
+    w_align_y: Optional[Tensor] = None,
     kappa_mean: float | Tensor | None = None,
     kappa_std: float | Tensor | None = None,
     w_mean: float | Tensor | None = None,
@@ -91,6 +180,12 @@ def total_loss(
     lambda_hf: float = 1.0,
     lambda_w: float = 0.0,
     lambda_bc: float = 0.0,
+    lambda_delta_a: float = 0.0,
+    a_delta: Optional[Tensor] = None,
+    w_align_mode: str = "none",
+    anchor_mode: str = "none",
+    lambda_anchor: float = 0.0,
+    anchor_index: int = 0,
     huber_delta: float = 1.0,
     step: Optional[int] = None,
     log_every_n: Optional[int] = None,
@@ -127,10 +222,21 @@ def total_loss(
     }
 
     if w_pred_points is not None and w_true_points is not None:
+        w_pred_for_loss = w_pred_points
+        plane_coeffs = None
+        mean_offset = None
+
+        if w_align_mode == "mean":
+            w_pred_for_loss, mean_offset = _align_mean(w_pred_points, w_true_points, mask_w)
+        elif w_align_mode == "plane":
+            w_pred_for_loss, plane_coeffs = _align_plane(
+                w_align_x, w_align_y, w_pred_points, w_true_points, mask_w
+            )
+
         w_mask = mask_w if mask_w is not None else mask
         w_std_t = _as_scalar_tensor(w_std, w_pred_points).clamp_min(EPS)
         w_mean_t = _as_scalar_tensor(w_mean, w_pred_points)
-        w_pred_hat = (w_pred_points - w_mean_t) / (w_std_t + EPS)
+        w_pred_hat = (w_pred_for_loss - w_mean_t) / (w_std_t + EPS)
         w_true_hat = (w_true_points - w_mean_t) / (w_std_t + EPS)
         raw_loss_w = huber_loss(w_pred_hat, w_true_hat, mask=w_mask, delta=huber_delta)
         weighted_loss_w = raw_loss_w * lambda_w
@@ -138,8 +244,48 @@ def total_loss(
         output["raw_loss_w"] = raw_loss_w
         output["weighted_loss_w"] = weighted_loss_w
         loss = loss + weighted_loss_w
+
+        if mean_offset is not None:
+            output["w_align_mean_offset"] = mean_offset.mean()
+        if plane_coeffs is not None:
+            output["w_plane_a"] = plane_coeffs[:, 0].mean()
+            output["w_plane_b"] = plane_coeffs[:, 1].mean()
+            output["w_plane_c"] = plane_coeffs[:, 2].mean()
     else:
         output["loss_w"] = raw_loss_w
+
+    anchor_loss = torch.tensor(0.0, device=loss.device, dtype=loss.dtype)
+    if (
+        w_pred_points is not None
+        and w_true_points is not None
+        and lambda_anchor > 0
+        and anchor_mode != "none"
+    ):
+        w_mask = mask_w if mask_w is not None else mask
+        w_std_t = _as_scalar_tensor(w_std, w_pred_points).clamp_min(EPS)
+        if anchor_mode == "mean":
+            diff = (w_pred_points - w_true_points).reshape(w_pred_points.shape[0], -1)
+            mask_flat = w_mask.reshape(w_mask.shape[0], -1) if w_mask is not None else None
+            diff_mean = _masked_mean(diff, mask_flat)
+            anchor_loss = torch.mean((diff_mean / (w_std_t + EPS)) ** 2)
+        elif anchor_mode == "point":
+            anchor_pred, valid_pred = _select_anchor(w_pred_points, w_mask, anchor_index)
+            anchor_true, valid_true = _select_anchor(w_true_points, w_mask, anchor_index)
+            valid = valid_pred & valid_true & torch.isfinite(anchor_pred) & torch.isfinite(anchor_true)
+            if valid.any():
+                diff = (anchor_pred[valid] - anchor_true[valid]) / (w_std_t + EPS)
+                anchor_loss = torch.mean(diff**2)
+
+        loss = loss + lambda_anchor * anchor_loss
+        output["loss_anchor"] = anchor_loss
+        output["weighted_loss_anchor"] = lambda_anchor * anchor_loss
+
+    delta_loss = torch.tensor(0.0, device=loss.device, dtype=loss.dtype)
+    if a_delta is not None and lambda_delta_a > 0:
+        delta_loss = torch.mean(a_delta**2)
+        loss = loss + lambda_delta_a * delta_loss
+        output["loss_delta_a"] = delta_loss
+        output["weighted_loss_delta_a"] = lambda_delta_a * delta_loss
 
     if bc_pred is not None and lambda_bc > 0:
         loss_bc = optional_bc_loss(bc_pred, mask_boundary=bc_mask)
@@ -148,7 +294,13 @@ def total_loss(
 
     if log_every_n is not None and log_every_n > 0 and step is not None:
         if step % log_every_n == 0:
-            total_weighted = (weighted_loss_kappa + weighted_loss_w + weighted_loss_hf).clamp_min(EPS)
+            total_weighted = (
+                weighted_loss_kappa
+                + weighted_loss_w
+                + weighted_loss_hf
+                + output.get("weighted_loss_anchor", torch.tensor(0.0, device=loss.device))
+                + output.get("weighted_loss_delta_a", torch.tensor(0.0, device=loss.device))
+            ).clamp_min(EPS)
             ratio_kappa = float((weighted_loss_kappa / total_weighted).item())
             ratio_w = float((weighted_loss_w / total_weighted).item())
             ratio_hf = float((weighted_loss_hf / total_weighted).item())
