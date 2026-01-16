@@ -1,0 +1,7 @@
+{
+  "num_samples": 51,
+  "num_points": 6528,
+  "kappa_mse": 1.1589876273099113,
+  "w_mse": 4.1168662088845544e-05,
+  "output_dir": "runs/20260116-181710/predict"
+}

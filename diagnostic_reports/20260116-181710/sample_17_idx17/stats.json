@@ -1,0 +1,186 @@
+{
+  "checkpoint": "runs/20260116-181710/checkpoint.pt",
+  "split": "val",
+  "split_source": "full_dataset",
+  "selection_method": "topk_w_rmse",
+  "sample_id": 17,
+  "dataset_index": 17,
+  "num_points": 128,
+  "num_valid": 128,
+  "a_pred_norm": 0.011328985914587975,
+  "w_pred_std": 0.006307746767255565,
+  "kappa_pred_std": 1.0728298093511228,
+  "model_metrics": {
+    "w_rmse": 0.0067533875723456,
+    "kappa_rmse": 1.0765689095466118,
+    "corr_kappa": 0.05580981968753069,
+    "w_pred_std": 0.006307746767255565,
+    "kappa_pred_std": 1.0728298093511228,
+    "w_aligned_plane_rmse": NaN
+  },
+  "kappa": {
+    "corr": 0.05580981968753069,
+    "corr_abs": 0.07666403284980731,
+    "corr_sign": -0.06962765213181146,
+    "rmse": 1.0765689095466118,
+    "mae": 0.573251527200031,
+    "max_abs": 6.126202038023621,
+    "scale_ratio_std": 175.10418951384867,
+    "scale_ratio_max": 131.89781709410377,
+    "kappa_meas_stats": {
+      "mean": -0.0009759262989193565,
+      "std": 0.006126808342819065,
+      "abs_max": 0.04646921530365944
+    },
+    "kappa_pred_stats": {
+      "mean": -0.09442622220376506,
+      "std": 1.0728298093511228,
+      "abs_max": 6.129188060760498
+    }
+  },
+  "w_available": true,
+  "w_true_std": 0.0021363612716290953,
+  "w": {
+    "raw": {
+      "rmse": 0.0067533875723456,
+      "mae": 0.004759090424727219,
+      "max_abs": 0.02342815510928631
+    },
+    "aligned_mean": {
+      "rmse": 0.006744803353122139,
+      "mae": 0.004686764714392666,
+      "max_abs": 0.02308775670826435
+    },
+    "aligned_plane": {
+      "rmse": 0.005810864475958927,
+      "mae": 0.004443272414361267,
+      "max_abs": 0.0241550508233713
+    },
+    "aligned_mean_offset": -0.00034039897434468003,
+    "plane_params": {
+      "a": -0.007649449641908206,
+      "b": -0.011643622911306047,
+      "c": 0.006514817011548684,
+      "success": 1.0
+    },
+    "w_true_stats": {
+      "mean": -0.00033640299937763574,
+      "std": 0.0021363612716290953,
+      "abs_max": 0.020166683942079544
+    },
+    "w_pred_stats": {
+      "mean": 3.995974964254856e-06,
+      "std": 0.006307746767255565,
+      "abs_max": 0.02300747111439705
+    }
+  },
+  "kappa_consistency": {
+    "corr": -0.22946633533470792,
+    "rmse": 0.19322481967458313,
+    "scale_ratio_std": 0.031976895923060876,
+    "scale_ratio_max": 0.04563828708565493,
+    "fit_s": -0.007337621122882437,
+    "fit_b": -0.001034224858894863,
+    "num_valid": 128
+  },
+  "sensitivity": {
+    "a_diff_zero": 8.928123861551285e-05,
+    "a_diff_double": 8.927425369620323e-05,
+    "a_diff_max": 8.928123861551285e-05,
+    "w_diff_zero": 0.00012121070176362991,
+    "w_diff_double": 0.00012119952589273453,
+    "w_diff_max": 0.00012121070176362991,
+    "kappa_diff_zero": 0.010992884635925293,
+    "kappa_diff_double": 0.010993897914886475,
+    "kappa_diff_max": 0.010993897914886475
+  },
+  "baseline_w_only": {
+    "target": "w",
+    "success": 1.0,
+    "solver": "lstsq",
+    "num_rows": 128,
+    "num_cols": 16,
+    "rank": 16,
+    "ridge_lambda": 0.0,
+    "w_rmse": 0.0019405785102747934,
+    "kappa_rmse": 0.19322481967458313,
+    "corr_kappa": -0.229466335334708,
+    "w_pred_std": 0.0008934173315849371,
+    "kappa_pred_std": 0.1916010971649252,
+    "w_aligned_plane_rmse": NaN
+  },
+  "baseline_kappa_only": {
+    "target": "kappa",
+    "success": 1.0,
+    "solver": "lstsq",
+    "num_rows": 128,
+    "num_cols": 16,
+    "rank": 0,
+    "ridge_lambda": 0.0,
+    "w_rmse": 0.002162685011948563,
+    "kappa_rmse": 0.006204048082547372,
+    "corr_kappa": NaN,
+    "w_pred_std": 0.0,
+    "kappa_pred_std": 0.0,
+    "w_aligned_plane_rmse": 0.0021080378251802073
+  },
+  "baseline_both": {
+    "target": "both",
+    "success": 1.0,
+    "solver": "lstsq",
+    "num_rows": 256,
+    "num_cols": 16,
+    "rank": 16,
+    "ridge_lambda": 0.0,
+    "w_rmse": 0.0021373697023471068,
+    "kappa_rmse": 0.005875764335866308,
+    "corr_kappa": 0.31138514752687735,
+    "w_pred_std": 6.73170920844641e-05,
+    "kappa_pred_std": 0.001980283849008097,
+    "w_aligned_plane_rmse": NaN
+  },
+  "baseline_lstsq": {
+    "target": "both",
+    "success": 1.0,
+    "solver": "lstsq",
+    "num_rows": 256,
+    "num_cols": 16,
+    "rank": 16,
+    "ridge_lambda": 0.0,
+    "w_rmse": 0.0021373697023471068,
+    "kappa_rmse": 0.005875764335866308,
+    "corr_kappa": 0.31138514752687735,
+    "w_pred_std": 6.73170920844641e-05,
+    "kappa_pred_std": 0.001980283849008097,
+    "w_aligned_plane_rmse": NaN
+  },
+  "coeff_norms": {
+    "a_w": 0.0015885039322603041,
+    "a_k": 0.0,
+    "a_b": 0.00035001852375640013,
+    "a_m": 0.01132898554918566
+  },
+  "coeff_diffs": {
+    "m_minus_w": 0.008064900109048477,
+    "m_minus_k": 0.007920837961137295,
+    "m_minus_b": 0.007900878475032062,
+    "w_minus_k": 0.0006941917893184387,
+    "w_minus_b": 0.0007118257563323495,
+    "k_minus_b": 0.0003359985101953223
+  },
+  "case_thresholds": {
+    "tol_small_w_rmse": 0.00021363612716290956,
+    "tol_large_w_rmse": 0.0010681806358145477,
+    "tol_high_kappa_rmse": 2.4580066337875905e-05,
+    "tol_low_corr_kappa": 0.2,
+    "ratio_kappa_rmse": 5.0,
+    "ratio_w_rmse": 5.0,
+    "ratio_model_w_rmse": 2.0,
+    "ratio_model_kappa_rmse": 2.0
+  },
+  "case_label": "CASE_UNIDENTIFIABLE",
+  "case_reasons": [
+    "kappa fit is good but w remains large even after plane align"
+  ],
+  "case_score": 0.0021080378251802073
+}
